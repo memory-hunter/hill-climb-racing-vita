@@ -6,24 +6,24 @@ endif ()
 
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "Toolchain file")
 
-project(so_loader C CXX)
+project(hcr C CXX)
 
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 # Vita application configuration
-set(VITA_APP_NAME "so-loader")
-set(VITA_TITLEID "SLDR00000")
-set(VITA_VPKNAME "so_loader")
+set(VITA_APP_NAME "Hill Climb Racing")
+set(VITA_TITLEID "HCR000000")
+set(VITA_VPKNAME "hcr")
 set(VITA_VERSION "01.00")
 set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12")
 
 # Optional: used for "send" and "dump" targets
-set(PSVITAIP "192.168.0.198" CACHE STRING "PSVita IP (for FTP access)")
+set(PSVITAIP "192.168.178.58" CACHE STRING "PSVita IP (for FTP access)")
 set(PARSECOREPATH "$ENV{PARSECOREPATH}" CACHE STRING "vita-parse-core main.py")
 
 # Game-specific definitions
-set(DATA_PATH "ux0:data/gamename/" CACHE STRING "Path to data (with trailing /)")
-set(SO_PATH "${DATA_PATH}main.so" CACHE STRING "Path to .so")
+set(DATA_PATH "ux0:data/hcr/" CACHE STRING "Path to data (with trailing /)")
+set(SO_PATH "${DATA_PATH}libgame.so" CACHE STRING "Path to .so")
 add_definitions(-DDATA_PATH="${DATA_PATH}" -DSO_PATH="${SO_PATH}")
 
 option(USE_SCELIBC_IO "Use SceLibcBridge for IO and some other std functions" ON)
@@ -79,8 +79,8 @@ add_executable(${CMAKE_PROJECT_NAME}
                source/java.c
                source/patch.c
                source/reimpl/bits/_ctype.c
-               source/reimpl/controls.c
-               source/reimpl/controls.h
+               #source/reimpl/controls.c
+               #source/reimpl/controls.h
                source/reimpl/egl.c
                source/reimpl/errno.c
                source/reimpl/io.c
