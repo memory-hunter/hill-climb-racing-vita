@@ -1034,6 +1034,15 @@ so_default_dynlib default_dynlib[] = {
         { "inflateInit_", (uintptr_t)&inflateInit_ },
         { "inflateReset", (uintptr_t)&inflateReset },
         { "uncompress", (uintptr_t)&uncompress },
+
+        // hcr missing shit
+        { "optarg", (uintptr_t)&optarg },
+        { "optind", (uintptr_t)&optind },
+        { "gzread", (uintptr_t)&gzread },
+        { "inflateCopy", (uintptr_t)&inflateCopy },
+        { "inflateSync", (uintptr_t)&inflateSync },
+        { "deflateParams", (uintptr_t)&deflateParams },
+        { "getopt", (uintptr_t)&getopt },
 };
 
 void resolve_imports(so_module* mod) {
