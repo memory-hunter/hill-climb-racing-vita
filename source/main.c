@@ -24,7 +24,9 @@ void *pthread_main(void *arg)
     int (*Game_setInAppItemPrice)(void *env, void *obj, jstring item, jstring price) = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_setInAppItemPrice");
     int (*Cocos2dx_nativeSetPaths)(void *env, void *obj, jstring apkFilePath) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxActivity_nativeSetPaths");
     int (*Game_isTestingMode)() = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_isTestingMode");
-
+    int (*Game_nativeInit)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInit");
+    int (*Game_nativeResize)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeResize");
+    int (*Game_nativeRender)(void *env) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeRender");
     /*
     Java_com_fingersoft_game_MainActivity_onControllerKeyEvent
     Java_com_fingersoft_game_MainActivity_onControllerConnectionEvent
@@ -81,16 +83,24 @@ void *pthread_main(void *arg)
     Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_32000000coins"), jni->NewStringUTF(&jni, "16.99"));
     Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_64000000coins"), jni->NewStringUTF(&jni, "25.99"));
     Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_160000000coins"), jni->NewStringUTF(&jni, "49.99"));
-    
+
     l_debug("isTestingMode");
     Game_isTestingMode();
 
     l_debug("nativeSetPaths");
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
 
+    
+
+    l_debug("nativeInit");
+    Game_nativeInit(&jni, NULL, 960, 544);
+
     while (1)
     {
-        // ... render call
+        l_debug("nativeResize");
+        Game_nativeResize(&jni, NULL, 960, 544);
+        l_debug("nativeRender");
+        Game_nativeRender(&jni);
         gl_swap();
     }
 
