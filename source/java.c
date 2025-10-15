@@ -24,7 +24,7 @@ jint getIntegerForKey(jmethodID id, va_list args)
 jstring getCocos2dxPackageName(jmethodID id, va_list args)
 {
 	fjni_logv_info("%s", "[FalsoJNI] getCocos2dxPackageName() called");
-	return jni->NewStringUTF(&jni, "test");
+	return jni->NewStringUTF(&jni, "hcr");
 }
 
 jint getMarketVariation(jmethodID id, va_list args)

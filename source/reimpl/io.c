@@ -30,26 +30,36 @@
 // void stat_newlib_to_bionic(struct stat * src, stat64_bionic * dst);
 #include "reimpl/bits/_struct_converters.c"
 
-FILE * fopen_soloader(const char * filename, const char * mode) {
-    if (strcmp(filename, "/proc/cpuinfo") == 0) {
-        return fopen_soloader("app0:/cpuinfo", mode);
-    } else if (strcmp(filename, "/proc/meminfo") == 0) {
-        return fopen_soloader("app0:/meminfo", mode);
+FILE *fopen_soloader(const char *filename, const char *mode) {
+    const char *changed = NULL;
+
+    if (strcmp(filename, "/proc/cpuinfo") == 0)
+        changed = "app0:/cpuinfo";
+    else if (strcmp(filename, "/proc/meminfo") == 0)
+        changed = "app0:/meminfo";
+    else {
+        char *p = strstr(filename, "/data/data/");
+        if (p) {
+            static char real_filename[512];
+            snprintf(real_filename, sizeof(real_filename), "ux0:/data/%s", p + strlen("/data/data/"));
+            changed = real_filename;
+        }
     }
 
 #ifdef USE_SCELIBC_IO
-    FILE* ret = sceLibcBridge_fopen(filename, mode);
+    FILE *ret = sceLibcBridge_fopen(changed ? changed : filename, mode);
 #else
-    FILE* ret = fopen(filename, mode);
+    FILE *ret = fopen(changed ? changed : filename, mode);
 #endif
 
     if (ret)
-        l_debug("fopen(%s, %s): %p", filename, mode, ret);
+        l_debug("fopen(%s, %s): %p", changed ? changed : filename, mode, ret);
     else
-        l_warn("fopen(%s, %s): %p", filename, mode, ret);
+        l_warn("fopen(%s, %s): %p", changed ? changed : filename, mode, ret);
 
     return ret;
 }
+
 
 int open_soloader(const char * path, int oflag, ...) {
     if (strcmp(path, "/proc/cpuinfo") == 0) {
