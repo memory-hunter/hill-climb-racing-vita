@@ -32,7 +32,7 @@ void gl_preload() {
     }
 
 #ifdef USE_GLSL_SHADERS
-    vglSetSemanticBindingMode(VGL_MODE_POSTPONED);
+    vglSetSemanticBindingMode(VGL_MODE_SHADER_PAIR);
 #endif
 }
 
