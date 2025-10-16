@@ -8,17 +8,22 @@
 void setAnimationInterval(jmethodID id, va_list args)
 {
 	jdouble interval = va_arg(args, jdouble);
-	fjni_logv_info("[FalsoJNI] setAnimationInterval called with %f", (float)interval);
+	fjni_logv_info("[FalsoJNI] setAnimationInterval(%f) called", (float)interval);
 }
 
 jint getIntegerForKey(jmethodID id, va_list args)
 {
 	jstring key = va_arg(args, jstring);
 	jint defaultValue = va_arg(args, jint);
-	const char *k = jni->GetStringUTFChars(&jni, key, NULL);
-	fjni_logv_info("[FalsoJNI] getIntegerForKey(%s, %d) called — returning default", k, defaultValue);
-	jni->ReleaseStringUTFChars(&jni, key, k);
+	fjni_logv_info("[FalsoJNI] getIntegerForKey(%s, %d) called", key, defaultValue);
 	return defaultValue;
+}
+
+void setIntegerForKey(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	jint value = va_arg(args, jint);
+	fjni_logv_info("[FalsoJNI] setIntegerForKey(%s, %d) called", key, value);
 }
 
 jstring getCocos2dxPackageName(jmethodID id, va_list args)
@@ -39,6 +44,89 @@ jstring getDeviceLanguage(jmethodID id, va_list args)
 	return jni->NewStringUTF(&jni, "en");
 }
 
+jstring getAndroidVersion(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getAndroidVersion() called");
+	return jni->NewStringUTF(&jni, "4.4");
+}
+
+void setBackgroundMusicVolume(jmethodID id, va_list args)
+{
+	jdouble volume = va_arg(args, jdouble);
+	fjni_logv_info("[FalsoJNI] setBackgroundMusicVolume(%f) called", volume);
+}
+
+void playBackgroundMusic(jmethodID id, va_list args)
+{
+	jstring path = va_arg(args, jstring);
+	jint isLoop = va_arg(args, jint);
+	fjni_logv_info("[FalsoJNI] playBackgroundMusic(%s, %s) called", path, isLoop ? "true" : "false");
+}
+
+void preloadEffect(jmethodID id, va_list args)
+{
+	jstring path = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] preloadEffect(%s) called", path);
+}
+
+jint getSettingInt(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	jint defaultValue = va_arg(args, jint);
+	fjni_logv_info("[FalsoJNI] getSettingInt(%s, %d) called", key, defaultValue);
+	return defaultValue;
+}
+
+void setStringForKey(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	jstring value = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] setStringForKey(%s, %s) called", key, value);
+}
+
+void flush(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] flush() called");
+}
+
+jstring getStringForKey(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	jstring defaultValue = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] getStringForKey(%s, %d) called", key, defaultValue);
+	return defaultValue;
+}
+
+jboolean hasInstallReward(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] flush() called");
+	return JNI_FALSE;
+}
+
+jint getIAPCoins(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getIAPCoins() called");
+	return 0;
+}
+
+jint getIAPAdFree(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getIAPAdFree() called");
+	return 0;
+}
+
+jboolean hasValue(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] hasValue(%s) called", key);
+	return JNI_FALSE;
+}
+
+void startAdView(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] startAdView() called");
+}
+
 /*
  * JNI Methods
  */
@@ -50,9 +138,26 @@ NameToMethodID nameToMethodId[] = {
 	{102, "getCocos2dxPackageName", METHOD_TYPE_OBJECT},
 	{103, "getMarketVariation", METHOD_TYPE_INT},
 	{104, "getDeviceLanguage", METHOD_TYPE_OBJECT},
+	{105, "getAndroidVersion", METHOD_TYPE_OBJECT},
+	{106, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
+	{107, "playBackgroundMusic", METHOD_TYPE_VOID},
+	{108, "preloadEffect", METHOD_TYPE_VOID},
+	{109, "getSettingInt", METHOD_TYPE_INT},
+	{110, "setStringForKey", METHOD_TYPE_VOID},
+	{111, "flush", METHOD_TYPE_VOID},
+	{112, "getStringForKey", METHOD_TYPE_OBJECT},
+	{113, "setIntegerForKey", METHOD_TYPE_VOID},
+	{114, "hasInstallReward", METHOD_TYPE_BOOLEAN},
+	{115, "getIAPCoins", METHOD_TYPE_INT},
+	{116, "getIAPAdFree", METHOD_TYPE_INT},
+	{117, "hasValue", METHOD_TYPE_BOOLEAN},
+	{118, "startAdView", METHOD_TYPE_VOID},
 };
 
-MethodsBoolean methodsBoolean[] = {};
+MethodsBoolean methodsBoolean[] = {
+	{114, hasInstallReward},
+	{117, hasValue},
+};
 MethodsByte methodsByte[] = {};
 MethodsChar methodsChar[] = {};
 MethodsDouble methodsDouble[] = {};
@@ -60,17 +165,28 @@ MethodsFloat methodsFloat[] = {};
 MethodsInt methodsInt[] = {
 	{101, getIntegerForKey},
 	{103, getMarketVariation},
+	{109, getSettingInt},
+	{115, getIAPCoins},
+	{116, getIAPAdFree},
 };
 MethodsLong methodsLong[] = {};
 MethodsObject methodsObject[] = {
 	{102, getCocos2dxPackageName},
 	{104, getDeviceLanguage},
+	{105, getAndroidVersion},
+	{112, getStringForKey},
 };
 MethodsShort methodsShort[] = {};
 MethodsVoid methodsVoid[] = {
 	{100, setAnimationInterval},
+	{106, setBackgroundMusicVolume},
+	{107, playBackgroundMusic},
+	{108, preloadEffect},
+	{110, setStringForKey},
+	{111, flush},
+	{113, setIntegerForKey},
+	{118, startAdView},
 };
-
 /*
  * Hill Climb Racing  Fields
  */
