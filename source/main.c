@@ -90,8 +90,6 @@ void *pthread_main(void *arg)
     l_debug("nativeSetPaths");
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
 
-    
-
     l_debug("nativeInit");
     Game_nativeInit(&jni, NULL, 960, 544);
 
