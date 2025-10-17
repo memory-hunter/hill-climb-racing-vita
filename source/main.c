@@ -27,32 +27,33 @@ static void (*Cocos2dx_nativeTouchesMove)(JNIEnv *jni, jobject thiz, jint *ids, 
 static void (*Cocos2dx_nativeTouchesEnd)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y) = NULL;
 static int (*Cocos2dx_nativeKeyDown)(JNIEnv *jni, jobject thiz, jint keyCode) = NULL;
 
-const int dummy_id = 69;
-
 void controls_handler_key(int32_t keycode, ControlsAction action)
 {
     switch (keycode)
     {
     case AKEYCODE_BUTTON_L1:
-        controls_handler_touch(dummy_id, 156.0, 410.0, action);
-        break;
+        controls_handler_touch(69, 156.0, 410.0, action);
+        return;
     case AKEYCODE_BUTTON_R1:
-        controls_handler_touch(dummy_id, 817.0, 410.0, action);
-        break;
+        controls_handler_touch(420, 817.0, 410.0, action);
+        return;
     }
+    Cocos2dx_nativeKeyDown(&jni, NULL, keycode);
 }
 
 void controls_handler_touch(int32_t id, float x, float y, ControlsAction action)
 {
-    l_debug("pos x, y: %f, %f", x, y);
     switch (action)
     {
     case CONTROLS_ACTION_DOWN:
         Cocos2dx_nativeTouchesBegin(&jni, NULL, id, x, y);
         break;
     case CONTROLS_ACTION_MOVE:
-        // Cocos2dx_nativeTouchesMove(&jni, NULL, &id, &x, &y);
+    {
+        Cocos2dx_nativeTouchesMove(&jni, NULL, &id, &x, &y);
         break;
+    }
+    break;
     case CONTROLS_ACTION_UP:
         Cocos2dx_nativeTouchesEnd(&jni, NULL, id, x, y);
         break;
