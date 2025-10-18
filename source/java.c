@@ -187,10 +187,6 @@ MethodsVoid methodsVoid[] = {
 	{113, setIntegerForKey},
 	{118, startAdView},
 };
-/*
- * Hill Climb Racing  Fields
- */
-const jlong animationInterval = 16666666LL;
 
 /*
  * JNI Fields
@@ -199,7 +195,6 @@ const jlong animationInterval = 16666666LL;
 // System-wide constant that applications sometimes request
 // https://developer.android.com/reference/android/content/Context.html#WINDOW_SERVICE
 char WINDOW_SERVICE[] = "window";
-char packageName[] = "ux0:/data/hcr/";
 
 // System-wide constant that's often used to determine Android version
 // https://developer.android.com/reference/android/os/Build.VERSION.html#SDK_INT
@@ -209,8 +204,6 @@ const int SDK_INT = 19; // Android 4.4 / KitKat
 NameToFieldID nameToFieldId[] = {
 	{0, "WINDOW_SERVICE", FIELD_TYPE_OBJECT},
 	{1, "SDK_INT", FIELD_TYPE_INT},
-	{2, "animationInterval", FIELD_TYPE_LONG},
-	{3, "packageName", FIELD_TYPE_OBJECT},
 };
 
 FieldsBoolean fieldsBoolean[] = {};
@@ -223,10 +216,8 @@ FieldsInt fieldsInt[] = {
 };
 FieldsObject fieldsObject[] = {
 	{0, WINDOW_SERVICE},
-	{3, packageName},
 };
 FieldsLong fieldsLong[] = {
-	{2, animationInterval},
 };
 FieldsShort fieldsShort[] = {};
 
