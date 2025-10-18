@@ -6,6 +6,7 @@
 #include <psp2/kernel/threadmgr.h>
 
 #include <falso_jni/FalsoJNI.h>
+#include <falso_jni/FalsoJNI_ImplBridge.h>
 #include <so_util/so_util.h>
 
 #include <pthread.h>
@@ -22,10 +23,12 @@ int sceLibcHeapSize = 4 * 1024 * 1024;
 
 so_module so_mod;
 
-static void (*Cocos2dx_nativeTouchesBegin)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y) = NULL;
-static void (*Cocos2dx_nativeTouchesMove)(JNIEnv *jni, jobject thiz, jint *ids, jfloat *xs, jfloat *ys) = NULL;
-static void (*Cocos2dx_nativeTouchesEnd)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y) = NULL;
-static int (*Cocos2dx_nativeKeyDown)(JNIEnv *jni, jobject thiz, jint keyCode) = NULL;
+void (*Cocos2dx_nativeTouchesBegin)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y);
+void (*Cocos2dx_nativeTouchesMove)(JNIEnv *jni, jobject thiz, jint *ids, jfloat *xs, jfloat *ys);
+void (*Cocos2dx_nativeTouchesEnd)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y);
+int (*Cocos2dx_nativeKeyDown)(JNIEnv *jni, jobject thiz, jint keyCode);
+
+JavaDynArray *touch_ids, *touch_xs, *touch_ys;
 
 void controls_handler_key(int32_t keycode, ControlsAction action)
 {
@@ -43,25 +46,27 @@ void controls_handler_key(int32_t keycode, ControlsAction action)
 
 void controls_handler_touch(int32_t id, float x, float y, ControlsAction action)
 {
+    ((int *)touch_ids->array)[0] = id + 8; // we use 0-7 for simulated touch events from buttons
+    ((float *)touch_xs->array)[0] = x;
+    ((float *)touch_ys->array)[0] = y;
+
     switch (action)
     {
     case CONTROLS_ACTION_DOWN:
-        Cocos2dx_nativeTouchesBegin(&jni, NULL, id, x, y);
+        Cocos2dx_nativeTouchesBegin(&jni, NULL, id + 8, x, y);
+        break;
+    case CONTROLS_ACTION_UP:
+        Cocos2dx_nativeTouchesEnd(&jni, NULL, id + 8, x, y);
         break;
     case CONTROLS_ACTION_MOVE:
-    {
-        Cocos2dx_nativeTouchesMove(&jni, NULL, &id, &x, &y);
-        break;
-    }
-    break;
-    case CONTROLS_ACTION_UP:
-        Cocos2dx_nativeTouchesEnd(&jni, NULL, id, x, y);
+        Cocos2dx_nativeTouchesMove(&jni, NULL, touch_ids, touch_xs, touch_ys);
         break;
     }
 }
 
 void controls_handler_analog(ControlsStickId which, float x, float y, ControlsAction action)
 {
+    return;
 }
 
 int main()
@@ -71,6 +76,10 @@ int main()
     gl_init();
 
     controls_init();
+
+    touch_ids = jda_alloc(1, FIELD_TYPE_INT);
+    touch_xs = jda_alloc(1, FIELD_TYPE_FLOAT);
+    touch_ys = jda_alloc(1, FIELD_TYPE_FLOAT);
 
     int (*JNI_OnLoad)(void *vm) = (void *)so_symbol(&so_mod, "JNI_OnLoad");
     int (*Cocos2dx_nativeSetPaths)(void *env, void *obj, jstring apkFilePath) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxActivity_nativeSetPaths");
