@@ -99,6 +99,23 @@ void startAdView(jmethodID id, va_list args)
 	fjni_logv_info("%s", "[FalsoJNI] startAdView() called");
 }
 
+void trackPage(jmethodID id, va_list args)
+{
+	jstring arg1 = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] trackPage(%s) called", arg1);
+}
+
+void stopAdView(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] stopAdView() called");
+}
+
+jint getApiLevel(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getApiLevel() called");
+	return 19;
+}
+
 /*
  * JNI Methods
  */
@@ -124,6 +141,9 @@ NameToMethodID nameToMethodId[] = {
 	{116, "getIAPAdFree", METHOD_TYPE_INT},
 	{117, "hasValue", METHOD_TYPE_BOOLEAN},
 	{118, "startAdView", METHOD_TYPE_VOID},
+	{119, "stopAdView", METHOD_TYPE_VOID},
+	{120, "trackPage", METHOD_TYPE_VOID},
+	{121, "getApiLevel", METHOD_TYPE_INT},
 };
 
 MethodsBoolean methodsBoolean[] = {
@@ -140,6 +160,7 @@ MethodsInt methodsInt[] = {
 	{109, getSettingInt},
 	{115, getIAPCoins},
 	{116, getIAPAdFree},
+	{121, getApiLevel},
 };
 MethodsLong methodsLong[] = {};
 MethodsObject methodsObject[] = {
@@ -158,6 +179,8 @@ MethodsVoid methodsVoid[] = {
 	{111, flush},
 	{113, setIntegerForKey},
 	{118, startAdView},
+	{119, stopAdView},
+	{120, trackPage},
 };
 
 /*
