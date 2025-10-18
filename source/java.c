@@ -2,6 +2,8 @@
 #include <falso_jni/FalsoJNI_Impl.h>
 #include <falso_jni/FalsoJNI_Logger.h>
 
+#include "SharedPreferences.h"
+
 /*
  * Hill Climb Racing methods
  */
@@ -9,21 +11,6 @@ void setAnimationInterval(jmethodID id, va_list args)
 {
 	jdouble interval = va_arg(args, jdouble);
 	fjni_logv_info("[FalsoJNI] setAnimationInterval(%f) called", (float)interval);
-}
-
-jint getIntegerForKey(jmethodID id, va_list args)
-{
-	jstring key = va_arg(args, jstring);
-	jint defaultValue = va_arg(args, jint);
-	fjni_logv_info("[FalsoJNI] getIntegerForKey(%s, %d) called", key, defaultValue);
-	return defaultValue;
-}
-
-void setIntegerForKey(jmethodID id, va_list args)
-{
-	jstring key = va_arg(args, jstring);
-	jint value = va_arg(args, jint);
-	fjni_logv_info("[FalsoJNI] setIntegerForKey(%s, %d) called", key, value);
 }
 
 jstring getCocos2dxPackageName(jmethodID id, va_list args)
@@ -77,24 +64,9 @@ jint getSettingInt(jmethodID id, va_list args)
 	return defaultValue;
 }
 
-void setStringForKey(jmethodID id, va_list args)
-{
-	jstring key = va_arg(args, jstring);
-	jstring value = va_arg(args, jstring);
-	fjni_logv_info("[FalsoJNI] setStringForKey(%s, %s) called", key, value);
-}
-
 void flush(jmethodID id, va_list args)
 {
 	fjni_logv_info("%s", "[FalsoJNI] flush() called");
-}
-
-jstring getStringForKey(jmethodID id, va_list args)
-{
-	jstring key = va_arg(args, jstring);
-	jstring defaultValue = va_arg(args, jstring);
-	fjni_logv_info("[FalsoJNI] getStringForKey(%s, %d) called", key, defaultValue);
-	return defaultValue;
 }
 
 jboolean hasInstallReward(jmethodID id, va_list args)
@@ -135,6 +107,9 @@ void startAdView(jmethodID id, va_list args)
 NameToMethodID nameToMethodId[] = {
 	{100, "setAnimationInterval", METHOD_TYPE_VOID},
 	{101, "getIntegerForKey", METHOD_TYPE_INT},
+	{112, "getStringForKey", METHOD_TYPE_OBJECT},
+	{113, "setIntegerForKey", METHOD_TYPE_VOID},
+	{110, "setStringForKey", METHOD_TYPE_VOID},
 	{102, "getCocos2dxPackageName", METHOD_TYPE_OBJECT},
 	{103, "getMarketVariation", METHOD_TYPE_INT},
 	{104, "getDeviceLanguage", METHOD_TYPE_OBJECT},
@@ -143,10 +118,7 @@ NameToMethodID nameToMethodId[] = {
 	{107, "playBackgroundMusic", METHOD_TYPE_VOID},
 	{108, "preloadEffect", METHOD_TYPE_VOID},
 	{109, "getSettingInt", METHOD_TYPE_INT},
-	{110, "setStringForKey", METHOD_TYPE_VOID},
 	{111, "flush", METHOD_TYPE_VOID},
-	{112, "getStringForKey", METHOD_TYPE_OBJECT},
-	{113, "setIntegerForKey", METHOD_TYPE_VOID},
 	{114, "hasInstallReward", METHOD_TYPE_BOOLEAN},
 	{115, "getIAPCoins", METHOD_TYPE_INT},
 	{116, "getIAPAdFree", METHOD_TYPE_INT},
@@ -217,8 +189,7 @@ FieldsInt fieldsInt[] = {
 FieldsObject fieldsObject[] = {
 	{0, WINDOW_SERVICE},
 };
-FieldsLong fieldsLong[] = {
-};
+FieldsLong fieldsLong[] = {};
 FieldsShort fieldsShort[] = {};
 
 __FALSOJNI_IMPL_CONTAINER_SIZES

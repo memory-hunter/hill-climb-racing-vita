@@ -11,6 +11,7 @@
 
 #include <pthread.h>
 #include "reimpl/controls.h"
+#include "SharedPreferences.h"
 
 int _newlib_heap_size_user = 256 * 1024 * 1024;
 
@@ -72,6 +73,8 @@ void controls_handler_analog(ControlsStickId which, float x, float y, ControlsAc
 int main()
 {
     soloader_init_all();
+
+    load_prefs();
 
     gl_init();
 
