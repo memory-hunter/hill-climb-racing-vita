@@ -262,7 +262,7 @@ static void prefsSaverLoop()
     }
 }
 
-void startPrefsSaver(int intervalSec = 10)
+void startPrefsSaver(int intervalSec)
 {
     saveIntervalSeconds = intervalSec;
     prefsSaverRunning = true;
