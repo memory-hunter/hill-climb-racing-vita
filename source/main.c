@@ -74,7 +74,7 @@ int main()
 {
     soloader_init_all();
 
-    load_prefs();
+    prefs_init();
 
     gl_init();
 
@@ -99,35 +99,6 @@ int main()
 
     JNI_OnLoad(&jvm);
 
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_150000coins"), jni->NewStringUTF(&jni, "1.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_300000coins"), jni->NewStringUTF(&jni, "2.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_750000coins"), jni->NewStringUTF(&jni, "4.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_2000000coins"), jni->NewStringUTF(&jni, "9.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_4000000coins"), jni->NewStringUTF(&jni, "16.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_8000000coins"), jni->NewStringUTF(&jni, "25.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.adfree_20000000coins"), jni->NewStringUTF(&jni, "49.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_300000coins"), jni->NewStringUTF(&jni, "1.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_600000coins"), jni->NewStringUTF(&jni, "2.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_1500000coins"), jni->NewStringUTF(&jni, "4.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_4000000coins"), jni->NewStringUTF(&jni, "9.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_8000000coins"), jni->NewStringUTF(&jni, "16.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_16000000coins"), jni->NewStringUTF(&jni, "25.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap2.adfree_40000000coins"), jni->NewStringUTF(&jni, "49.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_600000coins"), jni->NewStringUTF(&jni, "1.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_1200000coins"), jni->NewStringUTF(&jni, "2.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_3000000coins"), jni->NewStringUTF(&jni, "4.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_8000000coins"), jni->NewStringUTF(&jni, "9.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_16000000coins"), jni->NewStringUTF(&jni, "16.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_32000000coins"), jni->NewStringUTF(&jni, "25.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap3.adfree_80000000coins"), jni->NewStringUTF(&jni, "49.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_1200000coins"), jni->NewStringUTF(&jni, "1.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_2400000coins"), jni->NewStringUTF(&jni, "2.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_6000000coins"), jni->NewStringUTF(&jni, "4.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_16000000coins"), jni->NewStringUTF(&jni, "9.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_32000000coins"), jni->NewStringUTF(&jni, "16.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_64000000coins"), jni->NewStringUTF(&jni, "25.99"));
-    Game_setInAppItemPrice(&jni, NULL, jni->NewStringUTF(&jni, "com.fingersoft.hillclimb.iap4.adfree_160000000coins"), jni->NewStringUTF(&jni, "49.99"));
-
     Game_isTestingMode();
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
     Game_nativeInit(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -141,6 +112,8 @@ int main()
 
         gl_swap();
     }
+
+    prefs_destroy();
 
     return sceKernelExitDeleteThread(0);
 }

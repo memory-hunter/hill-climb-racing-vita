@@ -4,22 +4,27 @@
 #include <falso_jni/jni.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void load_prefs();
+    void prefs_init();
 
-jboolean getBoolForKey(jmethodID id, va_list args);
+    jboolean getBoolForKey(jmethodID id, va_list args);
 
-jint getIntegerForKey(jmethodID id, va_list args);
+    jint getIntegerForKey(jmethodID id, va_list args);
 
-void setIntegerForKey(jmethodID id, va_list args);
+    void setIntegerForKey(jmethodID id, va_list args);
 
-jobject getStringForKey(jmethodID id, va_list args);
+    jobject getStringForKey(jmethodID id, va_list args);
 
-void setBoolForKey(jmethodID id, va_list args);
+    void setBoolForKey(jmethodID id, va_list args);
 
-void setStringForKey(jmethodID id, va_list args);
+    void setStringForKey(jmethodID id, va_list args);
+
+    void prefs_destroy();
+    void startPrefsSaver(int intervalSec);
+    static void prefsSaverLoop();
 
 #ifdef __cplusplus
 };
