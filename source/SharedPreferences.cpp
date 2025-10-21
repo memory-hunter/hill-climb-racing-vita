@@ -1,5 +1,6 @@
 #include "SharedPreferences.h"
 #include "utils/logger.h"
+#include "utils/utils.h"
 
 #include <cstdarg>
 #include <cstring>
@@ -20,6 +21,7 @@ std::map<std::string, jstring> prefsStrings;
 std::mutex prefsMutex;
 
 const std::string shared_prefs_path = DATA_PATH "SharedPreferences.bin";
+const std::string shaders_path = DATA_PATH "gxp/";
 
 static std::thread prefsSaverThread;
 static std::condition_variable prefsSaverCond;
@@ -280,5 +282,21 @@ void prefs_destroy()
 void prefs_init()
 {
     loadPrefs(shared_prefs_path);
+    if (file_exists(shaders_path.c_str()))
+    {
+        l_debug("Existing shaders directory found.");
+    }
+    else
+    {
+        l_debug("Shaders directory not found. Creating...");
+        if (!file_mkpath(shaders_path.c_str(), 0755))
+        {
+            l_error("Could not create shaders directory at %s", shaders_path.c_str());
+        }
+        else
+        {
+            l_debug("Created shaders directory at %s", shaders_path.c_str());
+        }
+    }
     startPrefsSaver(2);
 }
