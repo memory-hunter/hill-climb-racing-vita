@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include "reimpl/controls.h"
 #include "SharedPreferences.h"
+#include "sound.h"
 
 int _newlib_heap_size_user = 256 * 1024 * 1024;
 
@@ -73,12 +74,10 @@ void controls_handler_analog(ControlsStickId which, float x, float y, ControlsAc
 int main()
 {
     soloader_init_all();
-
     prefs_init();
-
-    gl_init();
-
     controls_init();
+    sound_init();
+    gl_init();
 
     touch_ids = jda_alloc(1, FIELD_TYPE_INT);
     touch_xs = jda_alloc(1, FIELD_TYPE_FLOAT);
@@ -113,6 +112,7 @@ int main()
         gl_swap();
     }
 
+    sound_destroy();
     prefs_destroy();
 
     return sceKernelExitDeleteThread(0);

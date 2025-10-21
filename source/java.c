@@ -3,6 +3,7 @@
 #include <falso_jni/FalsoJNI_Logger.h>
 
 #include "SharedPreferences.h"
+#include "sound.h"
 
 /*
  * Hill Climb Racing methods
@@ -48,12 +49,6 @@ void playBackgroundMusic(jmethodID id, va_list args)
 	jstring path = va_arg(args, jstring);
 	jint isLoop = va_arg(args, jint);
 	fjni_logv_info("[FalsoJNI] playBackgroundMusic(%s, %s) called", path, isLoop ? "true" : "false");
-}
-
-void preloadEffect(jmethodID id, va_list args)
-{
-	jstring path = va_arg(args, jstring);
-	fjni_logv_info("[FalsoJNI] preloadEffect(%s) called", path);
 }
 
 jint getSettingInt(jmethodID id, va_list args)
@@ -116,6 +111,12 @@ jint getApiLevel(jmethodID id, va_list args)
 	return 19;
 }
 
+// void preloadEffectVoid(jmethodID id, va_list args)
+// {
+// 	fjni_logv_info("%s", "[FalsoJNI] preloadEffect(%s) called, redirecting to sound");
+// 	preloadEffect(id, args);
+// }
+
 /*
  * JNI Methods
  */
@@ -124,18 +125,17 @@ jint getApiLevel(jmethodID id, va_list args)
 NameToMethodID nameToMethodId[] = {
 	{100, "setAnimationInterval", METHOD_TYPE_VOID},
 	{101, "getIntegerForKey", METHOD_TYPE_INT},
-	{112, "getStringForKey", METHOD_TYPE_OBJECT},
-	{113, "setIntegerForKey", METHOD_TYPE_VOID},
-	{110, "setStringForKey", METHOD_TYPE_VOID},
 	{102, "getCocos2dxPackageName", METHOD_TYPE_OBJECT},
 	{103, "getMarketVariation", METHOD_TYPE_INT},
 	{104, "getDeviceLanguage", METHOD_TYPE_OBJECT},
 	{105, "getAndroidVersion", METHOD_TYPE_OBJECT},
 	{106, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
 	{107, "playBackgroundMusic", METHOD_TYPE_VOID},
-	{108, "preloadEffect", METHOD_TYPE_VOID},
 	{109, "getSettingInt", METHOD_TYPE_INT},
+	{110, "setStringForKey", METHOD_TYPE_VOID},
 	{111, "flush", METHOD_TYPE_VOID},
+	{112, "getStringForKey", METHOD_TYPE_OBJECT},
+	{113, "setIntegerForKey", METHOD_TYPE_VOID},
 	{114, "hasInstallReward", METHOD_TYPE_BOOLEAN},
 	{115, "getIAPCoins", METHOD_TYPE_INT},
 	{116, "getIAPAdFree", METHOD_TYPE_INT},
@@ -144,6 +144,21 @@ NameToMethodID nameToMethodId[] = {
 	{119, "stopAdView", METHOD_TYPE_VOID},
 	{120, "trackPage", METHOD_TYPE_VOID},
 	{121, "getApiLevel", METHOD_TYPE_INT},
+	// sound shit
+	{108, "preloadEffect", METHOD_TYPE_VOID},
+	{122, "unloadEffect", METHOD_TYPE_VOID},
+	{123, "playEffect", METHOD_TYPE_INT},
+	{124, "setEffectVolume", METHOD_TYPE_VOID},
+	{125, "setEffectRate", METHOD_TYPE_VOID},
+	{126, "stopEffect", METHOD_TYPE_VOID},
+	{127, "pauseEffect", METHOD_TYPE_VOID},
+	{128, "resumeEffect", METHOD_TYPE_VOID},
+	{129, "pauseAllEffects", METHOD_TYPE_VOID},
+	{130, "resumeAllEffects", METHOD_TYPE_VOID},
+	{131, "stopAllEffects", METHOD_TYPE_VOID},
+	{132, "getEffectsVolume", METHOD_TYPE_FLOAT},
+	{133, "setEffectsVolume", METHOD_TYPE_VOID},
+	{134, "preloadEffect", METHOD_TYPE_VOID},
 };
 
 MethodsBoolean methodsBoolean[] = {
@@ -153,7 +168,9 @@ MethodsBoolean methodsBoolean[] = {
 MethodsByte methodsByte[] = {};
 MethodsChar methodsChar[] = {};
 MethodsDouble methodsDouble[] = {};
-MethodsFloat methodsFloat[] = {};
+MethodsFloat methodsFloat[] = {
+	{132, getEffectsVolume},
+};
 MethodsInt methodsInt[] = {
 	{101, getIntegerForKey},
 	{103, getMarketVariation},
@@ -161,7 +178,9 @@ MethodsInt methodsInt[] = {
 	{115, getIAPCoins},
 	{116, getIAPAdFree},
 	{121, getApiLevel},
+	{123, playEffect},
 };
+
 MethodsLong methodsLong[] = {};
 MethodsObject methodsObject[] = {
 	{102, getCocos2dxPackageName},
@@ -171,16 +190,27 @@ MethodsObject methodsObject[] = {
 };
 MethodsShort methodsShort[] = {};
 MethodsVoid methodsVoid[] = {
+	{108, preloadEffect},
 	{100, setAnimationInterval},
 	{106, setBackgroundMusicVolume},
 	{107, playBackgroundMusic},
-	{108, preloadEffect},
 	{110, setStringForKey},
 	{111, flush},
 	{113, setIntegerForKey},
 	{118, startAdView},
 	{119, stopAdView},
 	{120, trackPage},
+	{122, unloadEffect},
+	{124, setEffectVolume},
+	{125, setEffectRate},
+	{126, stopEffect},
+	{127, pauseEffect},
+	{128, resumeEffect},
+	{129, pauseAllEffects},
+	{130, resumeAllEffects},
+	{131, stopAllEffects},
+	{133, setEffectsVolume},
+	//{134, preloadEffectVoid},
 };
 
 /*
