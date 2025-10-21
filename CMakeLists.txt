@@ -100,7 +100,7 @@ add_executable(${CMAKE_PROJECT_NAME}
                source/utils/settings.c
                source/utils/utils.c
                source/SharedPreferences.cpp
-               source/sound.cpp
+               source/audio.cpp
                lib/falso_jni/FalsoJNI.c
                lib/falso_jni/FalsoJNI_ImplBridge.c
                lib/falso_jni/FalsoJNI_Logger.c

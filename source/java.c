@@ -3,7 +3,7 @@
 #include <falso_jni/FalsoJNI_Logger.h>
 
 #include "SharedPreferences.h"
-#include "sound.h"
+#include "audio.h"
 
 /*
  * Hill Climb Racing methods
@@ -36,19 +36,6 @@ jstring getAndroidVersion(jmethodID id, va_list args)
 {
 	fjni_logv_info("%s", "[FalsoJNI] getAndroidVersion() called");
 	return jni->NewStringUTF(&jni, "4.4");
-}
-
-void setBackgroundMusicVolume(jmethodID id, va_list args)
-{
-	jdouble volume = va_arg(args, jdouble);
-	fjni_logv_info("[FalsoJNI] setBackgroundMusicVolume(%f) called", volume);
-}
-
-void playBackgroundMusic(jmethodID id, va_list args)
-{
-	jstring path = va_arg(args, jstring);
-	jint isLoop = va_arg(args, jint);
-	fjni_logv_info("[FalsoJNI] playBackgroundMusic(%s, %s) called", path, isLoop ? "true" : "false");
 }
 
 jint getSettingInt(jmethodID id, va_list args)
@@ -129,8 +116,6 @@ NameToMethodID nameToMethodId[] = {
 	{103, "getMarketVariation", METHOD_TYPE_INT},
 	{104, "getDeviceLanguage", METHOD_TYPE_OBJECT},
 	{105, "getAndroidVersion", METHOD_TYPE_OBJECT},
-	{106, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
-	{107, "playBackgroundMusic", METHOD_TYPE_VOID},
 	{109, "getSettingInt", METHOD_TYPE_INT},
 	{110, "setStringForKey", METHOD_TYPE_VOID},
 	{111, "flush", METHOD_TYPE_VOID},
@@ -159,17 +144,31 @@ NameToMethodID nameToMethodId[] = {
 	{132, "getEffectsVolume", METHOD_TYPE_FLOAT},
 	{133, "setEffectsVolume", METHOD_TYPE_VOID},
 	{134, "preloadEffect", METHOD_TYPE_VOID},
+	// music shit
+	{200, "preloadBackgroundMusic", METHOD_TYPE_VOID},
+	{201, "playBackgroundMusic", METHOD_TYPE_VOID},
+	{202, "stopBackgroundMusic", METHOD_TYPE_VOID},
+	{203, "pauseBackgroundMusic", METHOD_TYPE_VOID},
+	{204, "resumeBackgroundMusic", METHOD_TYPE_VOID},
+	{205, "rewindBackgroundMusic", METHOD_TYPE_VOID},
+	{206, "isBackgroundMusicPlaying", METHOD_TYPE_BOOLEAN},
+	{207, "endBackgroundMusic", METHOD_TYPE_VOID},
+	{208, "getBackgroundVolume", METHOD_TYPE_FLOAT},
+	{209, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
+
 };
 
 MethodsBoolean methodsBoolean[] = {
 	{114, hasInstallReward},
 	{117, hasValue},
+	{206, isBackgroundMusicPlaying},
 };
 MethodsByte methodsByte[] = {};
 MethodsChar methodsChar[] = {};
 MethodsDouble methodsDouble[] = {};
 MethodsFloat methodsFloat[] = {
 	{132, getEffectsVolume},
+	{208, getBackgroundVolume},
 };
 MethodsInt methodsInt[] = {
 	{101, getIntegerForKey},
@@ -192,8 +191,6 @@ MethodsShort methodsShort[] = {};
 MethodsVoid methodsVoid[] = {
 	{108, preloadEffect},
 	{100, setAnimationInterval},
-	{106, setBackgroundMusicVolume},
-	{107, playBackgroundMusic},
 	{110, setStringForKey},
 	{111, flush},
 	{113, setIntegerForKey},
@@ -210,7 +207,14 @@ MethodsVoid methodsVoid[] = {
 	{130, resumeAllEffects},
 	{131, stopAllEffects},
 	{133, setEffectsVolume},
-	//{134, preloadEffectVoid},
+	{200, preloadBackgroundMusic},
+	{201, playBackgroundMusic},
+	{202, stopBackgroundMusic},
+	{203, pauseBackgroundMusic},
+	{204, resumeBackgroundMusic},
+	{205, rewindBackgroundMusic},
+	{207, endBackgroundMusic},
+	{209, setBackgroundVolume},
 };
 
 /*

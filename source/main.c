@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include "reimpl/controls.h"
 #include "SharedPreferences.h"
-#include "sound.h"
+#include "audio.h"
 
 int _newlib_heap_size_user = 256 * 1024 * 1024;
 
@@ -76,7 +76,7 @@ int main()
     soloader_init_all();
     prefs_init();
     controls_init();
-    sound_init();
+    audio_init();
     gl_init();
 
     touch_ids = jda_alloc(1, FIELD_TYPE_INT);
@@ -112,7 +112,7 @@ int main()
         gl_swap();
     }
 
-    sound_destroy();
+    audio_destroy();
     prefs_destroy();
 
     return sceKernelExitDeleteThread(0);
