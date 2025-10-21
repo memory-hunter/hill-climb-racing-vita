@@ -24,8 +24,9 @@ in any way. To launch and play the game on their PS Vita device, users must prov
 their own legally obtained copy of the game in form of an .apk file.**
 
 ### Minor notes
-There are some issues with audio, such as the engine sound not playing.
-When finishing a play session, don't quit the game immediately. Wait for around 3 seconds and then quit, otherwise your game may crash or your save data may be corrupted.
+- There are some issues with audio, such as the engine sound not playing.
+- When finishing a play session, don't quit the game immediately. Wait for around 3 seconds and then quit, otherwise your game may crash or your save data may be corrupted.
+- When selecting levels or cars, it may seem like the game freezes, but unless the game crashes, it isn't frozen, wait until it responds, because it's loading things in the background.
 
 This is currently in its **BETA** version. Improvements may be made in the future.
 
