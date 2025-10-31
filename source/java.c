@@ -98,12 +98,6 @@ jint getApiLevel(jmethodID id, va_list args)
 	return 19;
 }
 
-// void preloadEffectVoid(jmethodID id, va_list args)
-// {
-// 	fjni_logv_info("%s", "[FalsoJNI] preloadEffect(%s) called, redirecting to sound");
-// 	preloadEffect(id, args);
-// }
-
 /*
  * JNI Methods
  */
