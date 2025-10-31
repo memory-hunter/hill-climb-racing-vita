@@ -32,7 +32,7 @@ void gl_preload() {
     }
 
 #ifdef USE_GLSL_SHADERS
-    vglSetSemanticBindingMode(VGL_MODE_SHADER_PAIR);
+    vglSetSemanticBindingMode(VGL_MODE_POSTPONED);
 #endif
 }
 
@@ -84,6 +84,8 @@ void glShaderSource_soloader(GLuint shader, GLsizei count,
         }
     }
     str[total_length] = '\0';
+
+    l_debug("shader is %s", str);
 
     load_shader(shader, str, total_length);
 
