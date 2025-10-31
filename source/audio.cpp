@@ -39,13 +39,22 @@ void audio_init()
     std::lock_guard<std::mutex> lock(gAudioSystem.mutex);
 
     l_debug("[Audio] Initializing SoLoud...");
-    SoLoud::result res = gAudioSystem.soloud.init();
+    SoLoud::result res = gAudioSystem.soloud.init(
+        SoLoud::Soloud::CLIP_ROUNDOFF,
+        SoLoud::Soloud::VITA_HOMEBREW,
+        44100,
+        2048,
+        2);
     if (res != SoLoud::SO_NO_ERROR)
     {
         l_error("[Audio] Failed to initialize SoLoud: %s",
                 gAudioSystem.soloud.getErrorString(res));
         return;
     }
+
+    gAudioSystem.soloud.setGlobalVolume(1.0f);
+    gAudioSystem.soloud.setMaxActiveVoiceCount(64);
+    gAudioSystem.soloud.setVisualizationEnable(false);
 
     gSoundManager.sounds.clear();
     gSoundManager.handles.clear();
@@ -185,6 +194,7 @@ jint playEffect(jmethodID, va_list args)
         return -1;
     }
 
+    wav->setLooping(isLoop);
     gAudioSystem.soloud.setRelativePlaySpeed(handle, rate);
     gAudioSystem.soloud.setPause(handle, false);
     gSoundManager.handles[fullPath].push_back(handle);
