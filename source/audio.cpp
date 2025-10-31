@@ -207,6 +207,7 @@ void setEffectVolume(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble volume = va_arg(args, jdouble);
+    l_debug("setEffectVolume called for stream %d to volume %.2f", streamID, volume);
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
     gAudioSystem.soloud.setVolume(streamID, volume);
 }
@@ -215,6 +216,7 @@ void setEffectRate(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble rate = va_arg(args, jdouble);
+    l_debug("setEffectRate called for stream %d to rate %.2f", streamID, rate);
     rate = std::fmax(0.5f, std::fmin(rate, 2.0f));
     gAudioSystem.soloud.setRelativePlaySpeed(streamID, rate);
 }
@@ -222,6 +224,7 @@ void setEffectRate(jmethodID, va_list args)
 void stopEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    l_debug("stopEffect called for stream %d", streamID);
     gAudioSystem.soloud.stop(streamID);
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
@@ -235,12 +238,14 @@ void stopEffect(jmethodID, va_list args)
 void pauseEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    l_debug("pauseEffect called for stream %d", streamID);
     gAudioSystem.soloud.setPause(streamID, true);
 }
 
 void resumeEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    l_debug("resumeEffect called for stream %d", streamID);
     gAudioSystem.soloud.setPause(streamID, false);
 }
 
@@ -276,7 +281,7 @@ void setEffectsVolume(jmethodID, va_list args)
 {
     jdouble volume = va_arg(args, jdouble);
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
-
+    l_debug("setEffectsVolume called to volume %.2f", volume);
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
     gSoundManager.volumeLeft = gSoundManager.volumeRight = volume;
     for (auto &pair : gSoundManager.handles)
@@ -353,7 +358,7 @@ void playBackgroundMusic(jmethodID, va_list args)
 
     gMusicManager.handle = gAudioSystem.soloud.playBackground(gMusicManager.bgm);
     gAudioSystem.soloud.setVolume(gMusicManager.handle,
-                                   (gMusicManager.volumeLeft + gMusicManager.volumeRight) / 2.0f);
+                                  (gMusicManager.volumeLeft + gMusicManager.volumeRight) / 2.0f);
 
     l_debug("playBackgroundMusic: playing %s (loop=%d)", fullPath.c_str(), isLoop);
 }
