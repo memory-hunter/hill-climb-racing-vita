@@ -187,6 +187,7 @@ jint playEffect(jmethodID, va_list args)
     rate = std::fmax(0.5f, std::fmin(rate, 2.0f));
 
     auto *wav = it->second;
+    wav->setLooping(isLoop);
     SoLoud::handle handle = gAudioSystem.soloud.play(*wav, volume, 0, true, 0);
     if (handle < 0)
     {
