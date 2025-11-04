@@ -283,6 +283,6 @@ void prefs_destroy()
 void prefs_init()
 {
     loadPrefs(shared_prefs_path);
-    startPrefsSaver(2);
     file_copy(shared_prefs_path.c_str(), shared_prefs_bak_path.c_str()); // make backup so user can restore if the dreaded crash happens
+    startPrefsSaver(saveIntervalSeconds);
 }
