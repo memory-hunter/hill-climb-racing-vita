@@ -24,8 +24,13 @@ in any way. To launch and play the game on their PS Vita device, users must prov
 their own legally obtained copy of the game in form of an .apk file.**
 
 ### Minor notes
-- When finishing a play session, don't quit the game immediately. Wait for around 3 seconds and then quit, otherwise your game may crash or your save data may be corrupted.
+- Before the game jumps to the loading screen after launching it, or after finishing a play session, don't quit the game immediately.
+  - Wait for around 3 seconds and then quit, otherwise your game may crash or your save data may be corrupted.
+  - If you still happen to crash/corrupt your save file, there is a backup inside `ux0:/data/hcr` folder with the name `SharedPreferences.bin.bak`. Simply remove the `.bak` by renaming and the game should work again, but some progress may be lost.
 - When selecting levels or cars, wait until it responds, because it's loading things in the background.
+- There is a moment after lots of gameplay, that when you get to the death screen, the game will start lagging and you will have massive FPS drop. It is yet to be figured out why does this happen.
+  - It is recommended to patiently wait until you can proceed to the selection menu, and restart the game.
+  - Else, just restart the game in the middle of the laggy sequence, but progress will be lost.
 
 This is currently in its **BETA** version. Improvements may be made in the future. See [Issues](https://github.com/memory-hunter/hill-climb-racing-vita/issues) for currently know problems.
 
