@@ -21,6 +21,7 @@ std::map<std::string, jstring> prefsStrings;
 std::mutex prefsMutex;
 
 const std::string shared_prefs_path = DATA_PATH "SharedPreferences.bin";
+const std::string shared_prefs_bak_path = DATA_PATH "SharedPreferences.bin.bak";
 const std::string shaders_path = DATA_PATH "gxp/";
 
 static std::thread prefsSaverThread;
@@ -283,4 +284,5 @@ void prefs_init()
 {
     loadPrefs(shared_prefs_path);
     startPrefsSaver(2);
+    file_copy(shared_prefs_path.c_str(), shared_prefs_bak_path.c_str()); // make backup so user can restore if the dreaded crash happens
 }
