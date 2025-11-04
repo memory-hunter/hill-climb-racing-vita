@@ -195,12 +195,13 @@ jint playEffect(jmethodID, va_list args)
         return -1;
     }
 
-    wav->setLooping(isLoop);
-    gAudioSystem.soloud.setRelativePlaySpeed(handle, rate);
+    if (isLoop)
+        gSoundManager.handles[fullPath].push_back(handle);
+
     gAudioSystem.soloud.setPause(handle, false);
-    gSoundManager.handles[fullPath].push_back(handle);
 
     l_debug("playEffect: playing %s (handle=%d)", fullPath.c_str(), handle);
+
     return handle;
 }
 
