@@ -48,8 +48,8 @@ In order to properly install the game, you'll have to follow these steps precise
 
 **Note** Don't install fd_fix.skprx if you're using rePatch plugin!
 - Make sure you have `libshacccg.suprx` in the `ur0:/data/` folder on your console. If you don't, follow [this guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) to extract it.
-- <u>Legally</u> obtain your copy of [Hill Climb Racing](https://play.google.com/store/apps/details?id=com.fingersoft.hillclimb&hl=en)
-version 1.18.0 for Android in form of an `.apk` file.
+- <u>Legally</u> obtain your copy of [Hill Climb Racing](https://play.google.com/store/apps/details?id=com.fingersoft.hillclimb&hl=en) for Android in form of an `.apk` file.
+  - Versions supported: `1.18.0`, `1.24.0`.
 - Open the `.apk` with any zip explorer (like [7-Zip](https://www.7-zip.org/)) and extract `assets` folder from the `.apk` into `ux0:data/hcr`. Also, extract `libgame.so` from `lib/armeabi-v7a/` in the same directory.
 - Place the `.apk` itself inside `ux0:data/hcr` and rename to `base.apk`.
 
