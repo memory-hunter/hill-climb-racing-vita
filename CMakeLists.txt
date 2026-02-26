@@ -52,19 +52,13 @@ if (DUMP_COMPILED_SHADERS)
   endif()
 endif()
 
-# Unique debug definition for loader's logging to not interfere with anything
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  # Uncomment this for so_loader logging:
-  add_definitions(-DDEBUG_SOLOADER)
-  # Uncomment this for verbose FalsoJNI logging:
-  add_definitions(-DFALSOJNI_DEBUGLEVEL=0)
-  # Uncomment this for OpenGL logging:
-  add_definitions(-DDEBUG_OPENGL)
-endif()
+# Keep runtime logging disabled in all build types to reduce overhead.
+add_definitions(-DFALSOJNI_DEBUGLEVEL=4)
 
 # makes sincos, sincosf, etc. visible
 add_definitions(-D_GNU_SOURCE -D__POSIX_VISIBLE=999999)
 
+# SoftFP float ABI - Now natively supported by your new SoftFP SDK!
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu11 -Wno-deprecated -fno-optimize-sibling-calls")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu++20 -Wno-write-strings -Wno-psabi")
 
@@ -124,6 +118,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
                       -Wl,--whole-archive pthread -Wl,--no-whole-archive
                       OpenSLES
                       sndfile
+                      mpg123
+                      mp3lame
+                      opus
                       vorbis
                       ogg
                       vorbisenc

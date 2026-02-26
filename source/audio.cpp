@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 struct AudioSystem
 {
@@ -29,6 +30,8 @@ struct SoundManager
 {
     std::map<std::string, SoLoud::Wav *> sounds;
     std::map<std::string, std::vector<SoLoud::handle>> handles;
+    std::map<SoLoud::handle, float> effectVolumes;
+    std::map<SoLoud::handle, float> effectRates;
     float volumeLeft = 0.5f;
     float volumeRight = 0.5f;
     std::mutex mutex;
@@ -58,6 +61,8 @@ void audio_init()
 
     gSoundManager.sounds.clear();
     gSoundManager.handles.clear();
+    gSoundManager.effectVolumes.clear();
+    gSoundManager.effectRates.clear();
     gSoundManager.volumeLeft = 0.5f;
     gSoundManager.volumeRight = 0.5f;
 
@@ -129,9 +134,11 @@ void preloadEffect(jmethodID, va_list args)
 void unloadEffect(jmethodID, va_list args)
 {
     jstring jpath = va_arg(args, jstring);
-    const char *path = jni.GetStringUTFChars(jpath, nullptr);
-    std::string key(path);
-    jni.ReleaseStringUTFChars(jpath, path);
+    const char *relPath = jni.GetStringUTFChars(jpath, nullptr);
+    std::string relative(relPath ? relPath : "");
+    jni.ReleaseStringUTFChars(jpath, relPath);
+
+    std::string key = "ux0:/data/hcr/assets/" + relative;
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
     auto it = gSoundManager.sounds.find(key);
@@ -142,6 +149,8 @@ void unloadEffect(jmethodID, va_list args)
         for (auto h : handles)
         {
             gAudioSystem.soloud.stop(h);
+            gSoundManager.effectVolumes.erase(h);
+            gSoundManager.effectRates.erase(h);
         }
         handles.clear();
         delete it->second;
@@ -197,6 +206,8 @@ jint playEffect(jmethodID, va_list args)
 
     if (isLoop)
         gSoundManager.handles[fullPath].push_back(handle);
+    gSoundManager.effectVolumes[handle] = volume;
+    gSoundManager.effectRates[handle] = rate;
 
     gAudioSystem.soloud.setPause(handle, false);
 
@@ -209,8 +220,16 @@ void setEffectVolume(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble volume = va_arg(args, jdouble);
-    l_debug("setEffectVolume called for stream %d to volume %.2f", streamID, volume);
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
+
+    std::lock_guard<std::mutex> lock(gSoundManager.mutex);
+    auto it = gSoundManager.effectVolumes.find(streamID);
+    if (it != gSoundManager.effectVolumes.end() &&
+        std::fabs(it->second - (float)volume) < 0.005f)
+    {
+        return;
+    }
+    gSoundManager.effectVolumes[streamID] = (float)volume;
     gAudioSystem.soloud.setVolume(streamID, volume);
 }
 
@@ -218,8 +237,16 @@ void setEffectRate(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble rate = va_arg(args, jdouble);
-    l_debug("setEffectRate called for stream %d to rate %.2f", streamID, rate);
     rate = std::fmax(0.5f, std::fmin(rate, 2.0f));
+
+    std::lock_guard<std::mutex> lock(gSoundManager.mutex);
+    auto it = gSoundManager.effectRates.find(streamID);
+    if (it != gSoundManager.effectRates.end() &&
+        std::fabs(it->second - (float)rate) < 0.005f)
+    {
+        return;
+    }
+    gSoundManager.effectRates[streamID] = (float)rate;
     gAudioSystem.soloud.setRelativePlaySpeed(streamID, rate);
 }
 
@@ -230,6 +257,8 @@ void stopEffect(jmethodID, va_list args)
     gAudioSystem.soloud.stop(streamID);
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
+    gSoundManager.effectVolumes.erase(streamID);
+    gSoundManager.effectRates.erase(streamID);
     for (auto &pair : gSoundManager.handles)
     {
         auto &vec = pair.second;

@@ -1,6 +1,6 @@
 #include "utils/init.h"
 #include "utils/glutil.h"
-#include "utils/logger.h"
+#include "utils/dialog.h"
 #include "utils/utils.h"
 
 #include <psp2/kernel/threadmgr.h>
@@ -89,26 +89,31 @@ int main()
     int (*Game_nativeInit)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInit");
     int (*Game_nativeResize)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeResize");
     int (*Game_nativeRender)(void *env) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeRender");
-    int (*Game_setInAppItemPrice)(void *env, void *obj, jstring item, jstring price) = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_setInAppItemPrice");
-
     Cocos2dx_nativeTouchesBegin = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesBegin");
     Cocos2dx_nativeTouchesMove = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesMove");
     Cocos2dx_nativeTouchesEnd = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesEnd");
     Cocos2dx_nativeKeyDown = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyDown");
+
+    if (!JNI_OnLoad || !Cocos2dx_nativeSetPaths || !Game_isTestingMode ||
+        !Game_nativeInit || !Game_nativeResize || !Game_nativeRender ||
+        !Cocos2dx_nativeTouchesBegin || !Cocos2dx_nativeTouchesMove ||
+        !Cocos2dx_nativeTouchesEnd || !Cocos2dx_nativeKeyDown)
+    {
+        fatal_error("Error: one or more required game symbols are missing.");
+    }
 
     JNI_OnLoad(&jvm);
 
     Game_isTestingMode();
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
     Game_nativeInit(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     while (1)
     {
         controls_poll();
-
         Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
         Game_nativeRender(&jni);
-
         gl_swap();
     }
 
