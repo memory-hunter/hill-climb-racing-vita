@@ -54,18 +54,17 @@ endif()
 
 # Unique debug definition for loader's logging to not interfere with anything
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  # Uncomment this for so_loader logging:
   add_definitions(-DDEBUG_SOLOADER)
   # Uncomment this for verbose FalsoJNI logging:
-  add_definitions(-DFALSOJNI_DEBUGLEVEL=0)
+  #add_definitions(-DFALSOJNI_DEBUGLEVEL=0)
   # Uncomment this for OpenGL logging:
-  add_definitions(-DDEBUG_OPENGL)
+  #add_definitions(-DDEBUG_OPENGL)
 endif()
 
 # makes sincos, sincosf, etc. visible
 add_definitions(-D_GNU_SOURCE -D__POSIX_VISIBLE=999999)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu11 -Wno-deprecated -fno-optimize-sibling-calls")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu11 -Wno-deprecated")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu++20 -Wno-write-strings -Wno-psabi")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -81,6 +80,8 @@ add_executable(${CMAKE_PROJECT_NAME}
                source/dynlib.c
                source/java.c
                source/patch.c
+               source/audio.cpp
+               source/SharedPreferences.cpp
                source/reimpl/bits/_ctype.c
                source/reimpl/controls.c
                source/reimpl/controls.h
@@ -99,8 +100,6 @@ add_executable(${CMAKE_PROJECT_NAME}
                source/utils/logger.c
                source/utils/settings.c
                source/utils/utils.c
-               source/SharedPreferences.cpp
-               source/audio.cpp
                lib/falso_jni/FalsoJNI.c
                lib/falso_jni/FalsoJNI_ImplBridge.c
                lib/falso_jni/FalsoJNI_Logger.c
@@ -124,6 +123,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
                       -Wl,--whole-archive pthread -Wl,--no-whole-archive
                       OpenSLES
                       sndfile
+                      mp3lame
+                      mpg123
+                      opus
                       vorbis
                       ogg
                       vorbisenc
@@ -159,6 +161,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
                       SceTouch_stub
                       SceVshBridge_stub
                       )
+
+target_link_options(hcr PRIVATE -Wl,--allow-multiple-definition)
 
 vita_create_self(eboot.bin ${CMAKE_PROJECT_NAME} UNSAFE NOASLR)
 vita_create_vpk(${VITA_VPKNAME}.vpk ${VITA_TITLEID} eboot.bin
