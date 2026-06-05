@@ -85,7 +85,7 @@ add_executable(${CMAKE_PROJECT_NAME}
                source/reimpl/bits/_ctype.c
                source/reimpl/controls.c
                source/reimpl/controls.h
-               source/reimpl/egl.c
+               #source/reimpl/egl.c
                source/reimpl/errno.c
                source/reimpl/io.c
                source/reimpl/log.c
