@@ -80,7 +80,7 @@ Everything that is required should be available after installing your environmen
 
 - Compile [vitaGL](https://github.com/Rinnegatamante/vitaGL)
   ````bash
-  make USE_SCRATCH_MEMORY=1 SOFTFP_ABI=1 HAVE_SHADER_CACHE=1 install -j`nproc`
+  make SOFTFP_ABI=1 DEPTH_STENCIL_HACK=1 USE_SCRATCH_MEMORY=1 CIRCULAR_POOL_SPEEDHACK=1 HAVE_SHADER_CACHE=1 install -j`nproc`
   ````
 
 After all these requirements are met, you can compile the loader with the following commands:
