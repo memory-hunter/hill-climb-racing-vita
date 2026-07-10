@@ -38,7 +38,9 @@ void audio_init()
 {
     std::lock_guard<std::mutex> lock(gAudioSystem.mutex);
 
+    #ifdef AUDIO_DEBUG
     l_debug("[Audio] Initializing SoLoud...");
+    #endif
     SoLoud::result res = gAudioSystem.soloud.init(
         SoLoud::Soloud::CLIP_ROUNDOFF,
         SoLoud::Soloud::VITA_HOMEBREW,
@@ -67,7 +69,9 @@ void audio_init()
     gMusicManager.currentPath.clear();
     gMusicManager.handle = 0;
 
+    #ifdef AUDIO_DEBUG
     l_debug("[Audio] SoLoud initialized successfully.");
+    #endif
 }
 
 void audio_destroy()
@@ -92,7 +96,9 @@ void audio_destroy()
 
     gAudioSystem.soloud.deinit();
 
+    #ifdef AUDIO_DEBUG
     l_debug("[Audio] SoLoud destroyed.");
+    #endif
 }
 
 // sound
@@ -109,7 +115,9 @@ void preloadEffect(jmethodID, va_list args)
 
     if (gSoundManager.sounds.find(fullPath) != gSoundManager.sounds.end())
     {
+        #ifdef AUDIO_DEBUG
         l_debug("preloadEffect: already loaded: %s", fullPath.c_str());
+        #endif
         return;
     }
 
@@ -117,13 +125,17 @@ void preloadEffect(jmethodID, va_list args)
     int res = wav->load(fullPath.c_str());
     if (res != SoLoud::SO_NO_ERROR)
     {
+        #ifdef AUDIO_DEBUG
         l_debug("preloadEffect: failed to load %s (SoLoud error %d)", fullPath.c_str(), res);
+        #endif
         delete wav;
         return;
     }
 
     gSoundManager.sounds[fullPath] = wav;
+    #ifdef AUDIO_DEBUG
     l_debug("preloadEffect: loaded %s", fullPath.c_str());
+    #endif
 }
 
 void unloadEffect(jmethodID, va_list args)
@@ -161,26 +173,34 @@ jint playEffect(jmethodID, va_list args)
     jni.ReleaseStringUTFChars(jpath, relPath);
 
     std::string fullPath = "ux0:/data/hcr/assets/" + relative;
+    #ifdef AUDIO_DEBUG
     l_debug("playEffect: called for %s (loop=%d, vol=%.2f, rate=%.2f)", fullPath.c_str(), isLoop, volume, rate);
+    #endif
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
     auto it = gSoundManager.sounds.find(fullPath);
     if (it == gSoundManager.sounds.end())
     {
+        #ifdef AUDIO_DEBUG
         l_debug("playEffect: sound not preloaded, attempting to load %s", fullPath.c_str());
+        #endif
 
         auto *wav = new SoLoud::Wav();
         int res = wav->load(fullPath.c_str());
         if (res != SoLoud::SO_NO_ERROR)
         {
+            #ifdef AUDIO_DEBUG
             l_debug("playEffect: failed to load %s (SoLoud error %d)", fullPath.c_str(), res);
+            #endif
             delete wav;
             return -1;
         }
         wav->setLooping(isLoop);
         gSoundManager.sounds[fullPath] = wav;
         it = gSoundManager.sounds.find(fullPath);
+        #ifdef AUDIO_DEBUG
         l_debug("playEffect: loaded on-demand %s", fullPath.c_str());
+        #endif
     }
 
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
@@ -191,7 +211,9 @@ jint playEffect(jmethodID, va_list args)
     SoLoud::handle handle = gAudioSystem.soloud.play(*wav, volume, 0, true, 0);
     if (handle < 0)
     {
+        #ifdef AUDIO_DEBUG
         l_debug("playEffect: failed to play %s", fullPath.c_str());
+        #endif
         return -1;
     }
 
@@ -200,7 +222,9 @@ jint playEffect(jmethodID, va_list args)
 
     gAudioSystem.soloud.setPause(handle, false);
 
+    #ifdef AUDIO_DEBUG
     l_debug("playEffect: playing %s (handle=%d)", fullPath.c_str(), handle);
+    #endif
 
     return handle;
 }
@@ -209,7 +233,9 @@ void setEffectVolume(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble volume = va_arg(args, jdouble);
+    #ifdef AUDIO_DEBUG
     l_debug("setEffectVolume called for stream %d to volume %.2f", streamID, volume);
+    #endif
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
     gAudioSystem.soloud.setVolume(streamID, volume);
 }
@@ -218,7 +244,9 @@ void setEffectRate(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
     jdouble rate = va_arg(args, jdouble);
+    #ifdef AUDIO_DEBUG
     l_debug("setEffectRate called for stream %d to rate %.2f", streamID, rate);
+    #endif
     rate = std::fmax(0.5f, std::fmin(rate, 2.0f));
     gAudioSystem.soloud.setRelativePlaySpeed(streamID, rate);
 }
@@ -226,7 +254,9 @@ void setEffectRate(jmethodID, va_list args)
 void stopEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    #ifdef AUDIO_DEBUG
     l_debug("stopEffect called for stream %d", streamID);
+    #endif
     gAudioSystem.soloud.stop(streamID);
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
@@ -240,14 +270,18 @@ void stopEffect(jmethodID, va_list args)
 void pauseEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    #ifdef AUDIO_DEBUG
     l_debug("pauseEffect called for stream %d", streamID);
+    #endif
     gAudioSystem.soloud.setPause(streamID, true);
 }
 
 void resumeEffect(jmethodID, va_list args)
 {
     jint streamID = va_arg(args, jint);
+    #ifdef AUDIO_DEBUG
     l_debug("resumeEffect called for stream %d", streamID);
+    #endif
     gAudioSystem.soloud.setPause(streamID, false);
 }
 
@@ -283,7 +317,9 @@ void setEffectsVolume(jmethodID, va_list args)
 {
     jdouble volume = va_arg(args, jdouble);
     volume = std::fmax(0.0f, std::fmin(volume, 1.0f));
+    #ifdef AUDIO_DEBUG
     l_debug("setEffectsVolume called to volume %.2f", volume);
+    #endif
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
     gSoundManager.volumeLeft = gSoundManager.volumeRight = volume;
     for (auto &pair : gSoundManager.handles)
@@ -310,7 +346,9 @@ void preloadBackgroundMusic(jmethodID, va_list args)
 
     if (gMusicManager.currentPath == fullPath && gMusicManager.hasBgmLoaded)
     {
+        #ifdef AUDIO_DEBUG
         l_debug("preloadBackgroundMusic: already loaded %s", fullPath.c_str());
+        #endif
         return;
     }
 
@@ -325,7 +363,9 @@ void preloadBackgroundMusic(jmethodID, va_list args)
     }
 
     gMusicManager.hasBgmLoaded = true;
+    #ifdef AUDIO_DEBUG
     l_debug("preloadBackgroundMusic: loaded %s", fullPath.c_str());
+    #endif
 }
 
 void playBackgroundMusic(jmethodID, va_list args)
@@ -362,7 +402,9 @@ void playBackgroundMusic(jmethodID, va_list args)
     gAudioSystem.soloud.setVolume(gMusicManager.handle,
                                   (gMusicManager.volumeLeft + gMusicManager.volumeRight) / 2.0f);
 
+    #ifdef AUDIO_DEBUG
     l_debug("playBackgroundMusic: playing %s (loop=%d)", fullPath.c_str(), isLoop);
+    #endif
 }
 
 void stopBackgroundMusic(jmethodID, va_list)
@@ -371,7 +413,9 @@ void stopBackgroundMusic(jmethodID, va_list)
     if (gMusicManager.hasBgmLoaded)
     {
         gAudioSystem.soloud.stopAll();
+        #ifdef AUDIO_DEBUG
         l_debug("stopBackgroundMusic: stopped");
+        #endif
     }
 }
 
@@ -381,7 +425,9 @@ void pauseBackgroundMusic(jmethodID, va_list)
     if (gMusicManager.handle)
     {
         gAudioSystem.soloud.setPause(gMusicManager.handle, true);
+        #ifdef AUDIO_DEBUG
         l_debug("pauseBackgroundMusic");
+        #endif
     }
 }
 
@@ -391,7 +437,9 @@ void resumeBackgroundMusic(jmethodID, va_list)
     if (gMusicManager.handle)
     {
         gAudioSystem.soloud.setPause(gMusicManager.handle, false);
+        #ifdef AUDIO_DEBUG
         l_debug("resumeBackgroundMusic");
+        #endif
     }
 }
 
@@ -402,7 +450,9 @@ void rewindBackgroundMusic(jmethodID, va_list)
     {
         gAudioSystem.soloud.stopAll();
         gMusicManager.handle = gAudioSystem.soloud.play(gMusicManager.bgm);
+        #ifdef AUDIO_DEBUG
         l_debug("rewindBackgroundMusic");
+        #endif
     }
 }
 
@@ -425,7 +475,9 @@ void endBackgroundMusic(jmethodID, va_list)
     gMusicManager.hasBgmLoaded = false;
     gMusicManager.currentPath.clear();
     gAudioSystem.soloud.deinit();
+    #ifdef AUDIO_DEBUG
     l_debug("endBackgroundMusic: deinitialized SoLoud");
+    #endif
 }
 
 jfloat getBackgroundVolume(jmethodID, va_list)
@@ -445,5 +497,7 @@ void setBackgroundVolume(jmethodID, va_list args)
     {
         gAudioSystem.soloud.setVolume(gMusicManager.handle, volume);
     }
+    #ifdef AUDIO_DEBUG
     l_debug("setBackgroundVolume: %.2f", volume);
+    #endif
 }
