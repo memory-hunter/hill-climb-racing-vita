@@ -37,7 +37,10 @@ void gl_preload() {
 }
 
 void gl_init() {
-    vglInitExtended(0, 960, 544, 6 * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
+    vglUseTripleBuffering(GL_FALSE);
+    vglSetParamBufferSize(2 * 1024 * 1024);
+    vglSetCircularPoolSize(2 * 291360);
+    vglInitWithCustomThreshold(0, 960, 544, 6 * 1024 * 1024, 0, 0, 0, SCE_GXM_MULTISAMPLE_4X);
 }
 
 void gl_swap() {
