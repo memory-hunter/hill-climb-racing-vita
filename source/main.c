@@ -61,7 +61,7 @@ void controls_handler_touch(int32_t id, float x, float y, ControlsAction action)
         Cocos2dx_nativeTouchesEnd(&jni, NULL, id + 8, x, y);
         break;
     case CONTROLS_ACTION_MOVE:
-        Cocos2dx_nativeTouchesMove(&jni, NULL, touch_ids, touch_xs, touch_ys);
+        Cocos2dx_nativeTouchesMove(&jni, NULL, (jintArray)touch_ids, (jfloatArray)touch_xs, (jfloatArray)touch_ys);
         break;
     }
 }
