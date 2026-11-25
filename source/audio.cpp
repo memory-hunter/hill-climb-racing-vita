@@ -142,7 +142,7 @@ void unloadEffect(jmethodID, va_list args)
 {
     jstring jpath = va_arg(args, jstring);
     const char *path = jni.GetStringUTFChars(jpath, nullptr);
-    std::string key(path);
+    std::string key = "ux0:/data/hcr/assets/" + std::string(path ? path : "");
     jni.ReleaseStringUTFChars(jpath, path);
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
@@ -158,6 +158,7 @@ void unloadEffect(jmethodID, va_list args)
         handles.clear();
         delete it->second;
         gSoundManager.sounds.erase(it);
+        gSoundManager.handles.erase(key);
     }
 }
 
@@ -410,9 +411,10 @@ void playBackgroundMusic(jmethodID, va_list args)
 void stopBackgroundMusic(jmethodID, va_list)
 {
     std::lock_guard<std::mutex> lock(gMusicManager.mutex);
-    if (gMusicManager.hasBgmLoaded)
+    if (gMusicManager.handle)
     {
-        gAudioSystem.soloud.stopAll();
+        gAudioSystem.soloud.stop(gMusicManager.handle);
+        gMusicManager.handle = 0;
         #ifdef AUDIO_DEBUG
         l_debug("stopBackgroundMusic: stopped");
         #endif
@@ -448,7 +450,8 @@ void rewindBackgroundMusic(jmethodID, va_list)
     std::lock_guard<std::mutex> lock(gMusicManager.mutex);
     if (gMusicManager.hasBgmLoaded)
     {
-        gAudioSystem.soloud.stopAll();
+        if (gMusicManager.handle)
+            gAudioSystem.soloud.stop(gMusicManager.handle);
         gMusicManager.handle = gAudioSystem.soloud.play(gMusicManager.bgm);
         #ifdef AUDIO_DEBUG
         l_debug("rewindBackgroundMusic");
@@ -470,13 +473,16 @@ jboolean isBackgroundMusicPlaying(jmethodID, va_list)
 void endBackgroundMusic(jmethodID, va_list)
 {
     std::lock_guard<std::mutex> lock(gMusicManager.mutex);
-    gAudioSystem.soloud.stopAll();
+    if (gMusicManager.handle)
+    {
+        gAudioSystem.soloud.stop(gMusicManager.handle);
+        gMusicManager.handle = 0;
+    }
     gMusicManager.bgm.stop();
     gMusicManager.hasBgmLoaded = false;
     gMusicManager.currentPath.clear();
-    gAudioSystem.soloud.deinit();
     #ifdef AUDIO_DEBUG
-    l_debug("endBackgroundMusic: deinitialized SoLoud");
+    l_debug("endBackgroundMusic");
     #endif
 }
 
