@@ -87,7 +87,6 @@ int main()
     int (*Cocos2dx_nativeSetPaths)(void *env, void *obj, jstring apkFilePath) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxActivity_nativeSetPaths");
     int (*Game_isTestingMode)() = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_isTestingMode");
     int (*Game_nativeInit)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInit");
-    int (*Game_nativeResize)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeResize");
     int (*Game_nativeRender)(void *env) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeRender");
     int (*Game_setInAppItemPrice)(void *env, void *obj, jstring item, jstring price) = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_setInAppItemPrice");
 
@@ -99,14 +98,16 @@ int main()
     JNI_OnLoad(&jvm);
 
     Game_isTestingMode();
-    Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
+    jstring apk_path = jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk");
+    Cocos2dx_nativeSetPaths(&jni, NULL, apk_path);
+    jni->DeleteLocalRef(&jni, apk_path);
     Game_nativeInit(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    // nativeResize broadcasts context recreation and abandons the existing GL buffers.
     while (1)
     {
         controls_poll();
 
-        Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
         Game_nativeRender(&jni);
 
         gl_swap();

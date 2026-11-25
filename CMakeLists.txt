@@ -15,7 +15,7 @@ set(VITA_APP_NAME "Hill Climb Racing")
 set(VITA_TITLEID "HCR000000")
 set(VITA_VPKNAME "hcr")
 set(VITA_VERSION "01.00")
-set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12")
+set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12 -s CONTENT_ID=HB0001-${VITA_TITLEID}_00-0000000000000000")
 
 # Optional: used for "send" and "dump" targets
 set(PSVITAIP "10.222.169.76" CACHE STRING "PSVita IP (for FTP access)")
@@ -102,6 +102,7 @@ set(SOURCES
     source/SharedPreferences.cpp
     source/reimpl/bits/_ctype.c
     source/reimpl/errno.c
+    source/reimpl/jni_refs.c
     source/reimpl/io.c
     source/reimpl/log.c
     source/reimpl/mem.c
@@ -253,17 +254,16 @@ vita_create_vpk(${VITA_VPKNAME}.vpk ${VITA_TITLEID} eboot.bin
                 )
 
 add_custom_target(send
-                  COMMAND echo destroy | nc ${PSVITAIP} 1338
-                  COMMAND echo destroy | nc ${PSVITAIP} 1338
-                  COMMAND curl -T eboot.bin ftp://${PSVITAIP}:1337/ux0:/app/${VITA_TITLEID}/
+                  COMMAND echo quit ${VITA_TITLEID} | nc ${PSVITAIP} 1338
+                  COMMAND curl -q -T eboot.bin ftp://${PSVITAIP}:1337/ux0:/app/${VITA_TITLEID}/
                   COMMAND echo launch ${VITA_TITLEID} | nc ${PSVITAIP} 1338
                   DEPENDS ${VITA_VPKNAME}.vpk-vpk
                   )
 
 add_custom_target(send_kvdb
-                  COMMAND echo destroy | nc ${PSVITAIP} 1338
-                  COMMAND curl -T eboot.bin ftp://${PSVITAIP}:1337/ux0:/app/${VITA_TITLEID}/
-                  COMMAND echo launch ux0:/app/${VITA_TITLEID}/eboot.bin | nc ${PSVITAIP} 1338
+                  COMMAND echo quit ${VITA_TITLEID} | nc ${PSVITAIP} 1338
+                  COMMAND curl -q -T eboot.bin ftp://${PSVITAIP}:1337/ux0:/app/${VITA_TITLEID}/
+                  COMMAND echo launch ${VITA_TITLEID} | nc ${PSVITAIP} 1338
                   DEPENDS ${VITA_VPKNAME}.vpk-vpk
                   )
 

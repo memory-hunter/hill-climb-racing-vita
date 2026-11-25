@@ -142,7 +142,7 @@ void unloadEffect(jmethodID, va_list args)
 {
     jstring jpath = va_arg(args, jstring);
     const char *path = jni.GetStringUTFChars(jpath, nullptr);
-    std::string key(path);
+    std::string key = "ux0:/data/hcr/assets/" + std::string(path ? path : "");
     jni.ReleaseStringUTFChars(jpath, path);
 
     std::lock_guard<std::mutex> lock(gSoundManager.mutex);
@@ -158,6 +158,7 @@ void unloadEffect(jmethodID, va_list args)
         handles.clear();
         delete it->second;
         gSoundManager.sounds.erase(it);
+        gSoundManager.handles.erase(key);
     }
 }
 

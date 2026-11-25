@@ -23,6 +23,7 @@
 #include <psp2/power.h>
 
 #include <falso_jni/FalsoJNI.h>
+#include "reimpl/jni_refs.h"
 #include <so_util/so_util.h>
 #include <fios/fios.h>
 
@@ -94,5 +95,6 @@ void soloader_init_all() {
     l_success("OpenGL preloaded.");
 
     jni_init();
+    jni_refs_init();
     l_success("FalsoJNI initialized.");
 }

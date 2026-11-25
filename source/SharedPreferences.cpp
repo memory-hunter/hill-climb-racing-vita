@@ -16,7 +16,7 @@
 
 std::map<std::string, bool> prefsBools;
 std::map<std::string, int> prefsInts;
-std::map<std::string, jstring> prefsStrings;
+std::map<std::string, std::string> prefsStrings;
 
 std::mutex prefsMutex;
 
@@ -43,15 +43,6 @@ void readValue(std::ifstream &in, T &value)
     in.read(reinterpret_cast<char *>(&value), sizeof(T));
 }
 
-void writeString(std::ofstream &out, jstring str)
-{
-    const char *val = jni.GetStringUTFChars(str, NULL);
-    uint32_t len = static_cast<uint32_t>(jni.GetStringLength(str));
-    writeValue(out, len);
-    out.write(val, len);
-    jni.ReleaseStringUTFChars(str, val);
-}
-
 void writeString(std::ofstream &out, const std::string &str)
 {
     uint32_t len = static_cast<uint32_t>(str.size());
@@ -65,15 +56,6 @@ void readString(std::ifstream &in, std::string &str)
     readValue(in, len);
     str.resize(len);
     in.read(&str[0], len);
-}
-
-void readString(std::ifstream &in, jstring &str)
-{
-    uint32_t len;
-    readValue(in, len);
-    std::string s(len, '\0');
-    in.read(&s[0], len);
-    str = jni.NewStringUTF(s.c_str());
 }
 
 void savePrefs(const std::string &filename)
@@ -148,7 +130,7 @@ void loadPrefs(const std::string &filename)
     for (uint32_t i = 0; i < count; ++i)
     {
         std::string key;
-        jstring val;
+        std::string val;
         readString(in, key);
         readString(in, val);
         prefsStrings[key] = val;
@@ -197,7 +179,9 @@ jobject getStringForKey(jmethodID, va_list args)
 
     std::lock_guard<std::mutex> lock(prefsMutex);
     auto it = prefsStrings.find(key);
-    return it != prefsStrings.end() ? it->second : _default_value;
+    return it != prefsStrings.end()
+        ? jni.NewStringUTF(it->second.c_str())
+        : jni.NewLocalRef(_default_value);
 }
 
 void setIntegerForKey(jmethodID, va_list args)
@@ -241,9 +225,13 @@ void setStringForKey(jmethodID, va_list args)
     std::string key(chars);
     jni.ReleaseStringUTFChars(_key, chars);
 
+    const char *valueChars = jni.GetStringUTFChars(val, nullptr);
+    std::string value(valueChars ? valueChars : "");
+    jni.ReleaseStringUTFChars(val, valueChars);
+
     {
         std::lock_guard<std::mutex> lock(prefsMutex);
-        prefsStrings[key] = val;
+        prefsStrings[key] = value;
     }
     needsSaving.exchange(true);
 }
