@@ -716,7 +716,7 @@ so_default_dynlib default_dynlib[] = {
         { "glScalex", (uintptr_t)&glScalex },
         { "glScissor", (uintptr_t)&glScissor },
         { "glShadeModel", (uintptr_t)&glShadeModel },
-        { "glShaderSource", (uintptr_t)&glShaderSource_soloader},
+        { "glShaderSource", (uintptr_t)&glShaderSource},
         { "glStencilFunc", (uintptr_t)&glStencilFunc },
         { "glStencilFuncSeparate", (uintptr_t)&glStencilFuncSeparate },
         { "glStencilMask", (uintptr_t)&glStencilMask },

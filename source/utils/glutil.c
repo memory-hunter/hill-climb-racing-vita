@@ -84,53 +84,6 @@ void glShaderSource_soloader(GLuint shader, GLsizei count,
         }
     }
     str[total_length] = '\0';
-    // temp fix until vitagl commit is not merged
-    if (strstr(str, "qs*floor(s/qs)")) {
-        char *patched = malloc(total_length + 8);
-        char *dst = patched, *src = str;
-        char *p;
-        while ((p = strstr(src, "float x ="))) {
-            memcpy(dst, src, p - src);
-            dst += p - src;
-            memcpy(dst, "float xc =", 10);
-            dst += 10;
-            src = p + 9;
-        }
-        memcpy(dst, src, strlen(src) + 1);
-
-        src = patched; dst = patched;
-        char *tmp = malloc(strlen(patched) + 8);
-        dst = tmp; src = patched;
-        while ((p = strstr(src, "float y ="))) {
-            memcpy(dst, src, p - src);
-            dst += p - src;
-            memcpy(dst, "float yc =", 10);
-            dst += 10;
-            src = p + 9;
-        }
-        memcpy(dst, src, strlen(src) + 1);
-        free(patched);
-        patched = tmp;
-
-        src = patched;
-        tmp = malloc(strlen(patched) + 8);
-        dst = tmp; src = patched;
-        while ((p = strstr(src, "vec2(x, y)"))) {
-            memcpy(dst, src, p - src);
-            dst += p - src;
-            memcpy(dst, "vec2(xc, yc)", 12);
-            dst += 12;
-            src = p + 10;
-        }
-        memcpy(dst, src, strlen(src) + 1);
-        free(patched);
-
-        free(str);
-        str = tmp;
-        total_length = strlen(str);
-    }
-
-    l_debug("shader is %s", str);
 
     load_shader(shader, str, total_length);
 

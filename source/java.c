@@ -1,6 +1,7 @@
 #include <falso_jni/FalsoJNI.h>
 #include <falso_jni/FalsoJNI_Impl.h>
 #include <falso_jni/FalsoJNI_Logger.h>
+#include <stdint.h>
 
 #include "SharedPreferences.h"
 #include "audio.h"
@@ -48,10 +49,147 @@ jint getSettingInt(jmethodID id, va_list args)
 
 jstring getSettingString(jmethodID id, va_list args)
 {
-	jstring key = va_arg(args, jstring);
+	va_arg(args, jstring);
 	jstring defaultValue = va_arg(args, jstring);
-	fjni_logv_info("[FalsoJNI] getSettingString(%s, %d) called", key, defaultValue);
-	return defaultValue;
+	fjni_logv_info("%s", "[FalsoJNI] getSettingString() called");
+	return jni->NewLocalRef(&jni, defaultValue);
+}
+
+jstring getFilesDirectory(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getFilesDirectory() called");
+	return jni->NewStringUTF(&jni, DATA_PATH "files");
+}
+
+jboolean isTv(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] isTv() called");
+	return JNI_FALSE;
+}
+
+jboolean isScientificRevenueEnabled(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] isScientificRevenueEnabled() called");
+	return JNI_FALSE;
+}
+
+void unlockAchievement(jmethodID id, va_list args)
+{
+	va_arg(args, jstring);
+	fjni_logv_info("%s", "[FalsoJNI] unlockAchievement() called");
+}
+
+void debugStringOnAndroid(jmethodID id, va_list args)
+{
+	va_arg(args, jstring);
+	fjni_logv_info("%s", "[FalsoJNI] debugStringOnAndroid() called");
+}
+
+void onFinishedAssetLoader(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] onFinishedAssetLoader() called");
+}
+
+jint hasVideoCampaigns(jmethodID id, va_list args)
+{
+	va_arg(args, jint);
+	fjni_logv_info("%s", "[FalsoJNI] hasVideoCampaigns() called");
+	return 0;
+}
+
+jboolean hasEulaBeenAccepted(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] hasEulaBeenAccepted() called");
+	return JNI_FALSE;
+}
+
+jint getIAPGems(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getIAPGems() called");
+	return 0;
+}
+
+jint getIAPBundle(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getIAPBundle() called");
+	return 0;
+}
+
+jint getIAPError(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] getIAPError() called");
+	return 0;
+}
+
+void showEULA(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] showEULA() called");
+}
+
+void trackEvent(jmethodID id, va_list args)
+{
+	va_arg(args, jstring);
+	va_arg(args, jobject);
+	fjni_logv_info("%s", "[FalsoJNI] trackEvent() called");
+}
+
+void disableAdManagerPopupDialogs(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] disableAdManagerPopupDialogs() called");
+}
+
+void enterInGame(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] enterInGame() called");
+}
+
+jboolean isGoogleSignedIn(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] isGoogleSignedIn() called");
+	return JNI_FALSE;
+}
+
+void suggestAppRating(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] suggestAppRating() called");
+}
+
+void leaveInGame(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] leaveInGame() called");
+}
+
+jobject hashMapConstructor(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] HashMap constructor called");
+	// FalsoJNI reserves this value for non-owning fake Java objects.
+	return (jobject)(uintptr_t)0x42424242;
+}
+
+jobject hashMapPut(jmethodID id, va_list args)
+{
+	va_arg(args, jobject);
+	va_arg(args, jobject);
+	fjni_logv_info("%s", "[FalsoJNI] HashMap.put() called");
+	return NULL;
+}
+
+void showInterstitialPromo(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] showInterstitialPromo() called");
+}
+
+void showCrossPromotion(jmethodID id, va_list args)
+{
+	va_arg(args, jint);
+	fjni_logv_info("%s", "[FalsoJNI] showCrossPromotion() called");
+}
+
+void setAchievementSteps(jmethodID id, va_list args)
+{
+	va_arg(args, jstring);
+	va_arg(args, jint);
+	fjni_logv_info("%s", "[FalsoJNI] setAchievementSteps() called");
 }
 
 void flush(jmethodID id, va_list args)
@@ -106,11 +244,6 @@ jint getApiLevel(jmethodID id, va_list args)
 	return 19;
 }
 
-jboolean retFalse(jmethodID id, va_list args)
-{
-	return JNI_FALSE;
-}
-
 /*
  * JNI Methods
  */
@@ -162,15 +295,40 @@ NameToMethodID nameToMethodId[] = {
 	{207, "endBackgroundMusic", METHOD_TYPE_VOID},
 	{208, "getBackgroundVolume", METHOD_TYPE_FLOAT},
 	{209, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
-	{300, "isTv", METHOD_TYPE_BOOLEAN},
-	{301, "getSettingString", METHOD_TYPE_OBJECT},
+	{210, "getFilesDirectory", METHOD_TYPE_OBJECT},
+	{211, "isTv", METHOD_TYPE_BOOLEAN},
+	{212, "isScientificRevenueEnabled", METHOD_TYPE_BOOLEAN},
+	{213, "unlockAchievement", METHOD_TYPE_VOID},
+	{214, "getSettingString", METHOD_TYPE_OBJECT},
+	{215, "debugStringOnAndroid", METHOD_TYPE_VOID},
+	{216, "onFinishedAssetLoader", METHOD_TYPE_VOID},
+	{217, "hasVideoCampaigns", METHOD_TYPE_INT},
+	{218, "hasEulaBeenAccepted", METHOD_TYPE_BOOLEAN},
+	{219, "getIAPGems", METHOD_TYPE_INT},
+	{220, "getIAPBundle", METHOD_TYPE_INT},
+	{221, "getIAPError", METHOD_TYPE_INT},
+	{222, "showEULA", METHOD_TYPE_VOID},
+	{223, "trackEvent", METHOD_TYPE_VOID},
+	{224, "disableAdManagerPopupDialogs", METHOD_TYPE_VOID},
+	{225, "enterInGame", METHOD_TYPE_VOID},
+	{226, "isGoogleSignedIn", METHOD_TYPE_BOOLEAN},
+	{227, "suggestAppRating", METHOD_TYPE_VOID},
+	{228, "leaveInGame", METHOD_TYPE_VOID},
+	{229, "java/util/HashMap/<init>", METHOD_TYPE_OBJECT},
+	{230, "put", METHOD_TYPE_OBJECT},
+	{231, "showInterstitialPromo", METHOD_TYPE_VOID},
+	{232, "showCrossPromotion", METHOD_TYPE_VOID},
+	{233, "setAchievementSteps", METHOD_TYPE_VOID},
 };
 
 MethodsBoolean methodsBoolean[] = {
 	{114, hasInstallReward},
 	{117, hasValue},
 	{206, isBackgroundMusicPlaying},
-	{300, retFalse},
+	{211, isTv},
+	{212, isScientificRevenueEnabled},
+	{218, hasEulaBeenAccepted},
+	{226, isGoogleSignedIn},
 };
 MethodsByte methodsByte[] = {};
 MethodsChar methodsChar[] = {};
@@ -187,6 +345,10 @@ MethodsInt methodsInt[] = {
 	{116, getIAPAdFree},
 	{121, getApiLevel},
 	{123, playEffect},
+	{217, hasVideoCampaigns},
+	{219, getIAPGems},
+	{220, getIAPBundle},
+	{221, getIAPError},
 };
 
 MethodsLong methodsLong[] = {};
@@ -195,7 +357,10 @@ MethodsObject methodsObject[] = {
 	{104, getDeviceLanguage},
 	{105, getAndroidVersion},
 	{112, getStringForKey},
-	{301, getSettingString},
+	{210, getFilesDirectory},
+	{214, getSettingString},
+	{229, hashMapConstructor},
+	{230, hashMapPut},
 };
 MethodsShort methodsShort[] = {};
 MethodsVoid methodsVoid[] = {
@@ -225,6 +390,18 @@ MethodsVoid methodsVoid[] = {
 	{205, rewindBackgroundMusic},
 	{207, endBackgroundMusic},
 	{209, setBackgroundVolume},
+	{213, unlockAchievement},
+	{215, debugStringOnAndroid},
+	{216, onFinishedAssetLoader},
+	{222, showEULA},
+	{223, trackEvent},
+	{224, disableAdManagerPopupDialogs},
+	{225, enterInGame},
+	{227, suggestAppRating},
+	{228, leaveInGame},
+	{231, showInterstitialPromo},
+	{232, showCrossPromotion},
+	{233, setAchievementSteps},
 };
 
 /*
