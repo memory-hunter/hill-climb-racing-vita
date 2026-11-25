@@ -9,6 +9,17 @@ san="-fsanitize=address,undefined -fno-omit-frame-pointer"
 
 mkdir -p "$build"
 
+"$cc" -std=c11 -Wall -Wextra -Werror $san -I"$root/lib/vitagl/source/utils" \
+    "$root/tests/glsl_swizzle_test.c" "$root/lib/vitagl/source/utils/glsl_swizzle.c" \
+    -o "$build/glsl_swizzle_test"
+ASAN_OPTIONS=abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 "$build/glsl_swizzle_test"
+
+"$cc" -std=gnu11 -Wall -Wextra -Werror -Wno-unknown-pragmas -Wno-unused-parameter \
+    -Wno-unused-function $san \
+    -I"$root/lib" -I"$root/lib/falso_jni" -I"$root/source" \
+    "$root/tests/java_bridge_test.c" -o "$build/java_bridge_test"
+ASAN_OPTIONS=abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 "$build/java_bridge_test"
+
 "$cc" -std=c11 -Wall -Wextra -Werror $san -I"$root/lib" -I"$root/lib/falso_jni" -pthread \
     "$root/tests/jni_refs_test.c" -o "$build/jni_refs_test"
 ASAN_OPTIONS=abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 "$build/jni_refs_test"

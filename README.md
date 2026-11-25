@@ -28,9 +28,6 @@ their own legally obtained copy of the game in form of an .apk file.**
   - Wait for around 3 seconds and then quit, otherwise your game may crash or your save data may be corrupted.
   - If you still happen to crash/corrupt your save file, there is a backup inside `ux0:/data/hcr` folder with the name `SharedPreferences.bin.bak`. Simply remove the `.bak` by renaming and the game should work again, but some progress may be lost.
 - When selecting levels or cars, wait until it responds, because it's loading things in the background.
-- There is a moment after lots of gameplay, that when you get to the death screen, the game will start lagging and you will have massive FPS drop. It is yet to be figured out why does this happen.
-  - It is recommended to patiently wait until you can proceed to the selection menu, and restart the game.
-  - Else, just restart the game in the middle of the laggy sequence, but progress will be lost.
 
 This is currently in its **BETA** version. Improvements may be made in the future. See [Issues](https://github.com/memory-hunter/hill-climb-racing-vita/issues) for currently know problems.
 
@@ -49,7 +46,7 @@ In order to properly install the game, you'll have to follow these steps precise
 **Note** Don't install fd_fix.skprx if you're using rePatch plugin!
 - Make sure you have `libshacccg.suprx` in the `ur0:/data/` folder on your console. If you don't, follow [this guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) to extract it.
 - <u>Legally</u> obtain your copy of [Hill Climb Racing](https://play.google.com/store/apps/details?id=com.fingersoft.hillclimb&hl=en) for Android in form of an `.apk` file.
-  - Versions supported: `1.18.0`. Other versions may run but I don't support them currently.
+  - Supported version: `1.41.0` (build `251`). Other versions are not supported.
 - Open the `.apk` with any zip explorer (like [7-Zip](https://www.7-zip.org/)) and extract `assets` folder from the `.apk` into `ux0:data/hcr`. Also, extract `libgame.so` from `lib/armeabi-v7a/` in the same directory.
 - Place the `.apk` itself inside `ux0:data/hcr` and rename to `base.apk`.
 
@@ -78,15 +75,11 @@ In order to build the loader, you'll need a [vitasdk](https://github.com/vitasdk
 You can get your environment started nicely by following [Rocroverss's Vita .so porting guide](https://github.com/Rocroverss/vitasoguide?tab=readme-ov-file#section2).
 Everything that is required should be available after installing your environment by following the instructions in the README.md of the guide.
 
-- Compile [vitaGL](https://github.com/Rinnegatamante/vitaGL)
-  ````bash
-  make SOFTFP_ABI=1 DEPTH_STENCIL_HACK=1 USE_SCRATCH_MEMORY=1 CIRCULAR_POOL_SPEEDHACK=1 HAVE_SHADER_CACHE=1 install -j`nproc`
-  ````
-
-After all these requirements are met, you can compile the loader with the following commands:
+After all these requirements are met, initialize the pinned dependencies and compile the loader:
 
 ```bash
-cmake -B build .
+git submodule update --init --recursive
+cmake -B build -DCMAKE_BUILD_TYPE=Release .
 cmake --build build
 ```
 

@@ -12,5 +12,5 @@
 	branch = master
 [submodule "lib/vitagl"]
 	path = lib/vitagl
-	url = https://github.com/Rinnegatamante/vitaGL
-	branch = master
+	url = https://github.com/devnoname120/vitaGL.git
+	branch = support/hcr-1.41.0-swizzle
