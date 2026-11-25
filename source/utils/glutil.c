@@ -37,10 +37,7 @@ void gl_preload() {
 }
 
 void gl_init() {
-    vglUseTripleBuffering(GL_FALSE);
-    vglSetParamBufferSize(2 * 1024 * 1024);
-    vglSetCircularPoolSize(2 * 291360);
-    vglInitWithCustomThreshold(0, 960, 544, 6 * 1024 * 1024, 0, 0, 0, SCE_GXM_MULTISAMPLE_4X);
+    vglInitExtended(0, 960, 544, 6 * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
 }
 
 void gl_swap() {
@@ -50,7 +47,7 @@ void gl_swap() {
 void glShaderSource_soloader(GLuint shader, GLsizei count,
                              const GLchar **string, const GLint *_length) {
 #ifdef DEBUG_OPENGL
-    sceClibPrintf("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n", __builtin_return_address(0), shader, count, string, _length);
+    l_debug("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n", __builtin_return_address(0), shader, count, string, _length);
 #endif
     if (!string) {
         l_error("<%p> Shader source string is NULL, count: %i",
@@ -87,6 +84,51 @@ void glShaderSource_soloader(GLuint shader, GLsizei count,
         }
     }
     str[total_length] = '\0';
+    // temp fix until vitagl commit is not merged
+    if (strstr(str, "qs*floor(s/qs)")) {
+        char *patched = malloc(total_length + 8);
+        char *dst = patched, *src = str;
+        char *p;
+        while ((p = strstr(src, "float x ="))) {
+            memcpy(dst, src, p - src);
+            dst += p - src;
+            memcpy(dst, "float xc =", 10);
+            dst += 10;
+            src = p + 9;
+        }
+        memcpy(dst, src, strlen(src) + 1);
+
+        src = patched; dst = patched;
+        char *tmp = malloc(strlen(patched) + 8);
+        dst = tmp; src = patched;
+        while ((p = strstr(src, "float y ="))) {
+            memcpy(dst, src, p - src);
+            dst += p - src;
+            memcpy(dst, "float yc =", 10);
+            dst += 10;
+            src = p + 9;
+        }
+        memcpy(dst, src, strlen(src) + 1);
+        free(patched);
+        patched = tmp;
+
+        src = patched;
+        tmp = malloc(strlen(patched) + 8);
+        dst = tmp; src = patched;
+        while ((p = strstr(src, "vec2(x, y)"))) {
+            memcpy(dst, src, p - src);
+            dst += p - src;
+            memcpy(dst, "vec2(xc, yc)", 12);
+            dst += 12;
+            src = p + 10;
+        }
+        memcpy(dst, src, strlen(src) + 1);
+        free(patched);
+
+        free(str);
+        str = tmp;
+        total_length = strlen(str);
+    }
 
     l_debug("shader is %s", str);
 
@@ -97,7 +139,7 @@ void glShaderSource_soloader(GLuint shader, GLsizei count,
 
 void glCompileShader_soloader(GLuint shader) {
 #ifdef DEBUG_OPENGL
-    sceClibPrintf("[gl_dbg] glCompileShader<%p>(shader: %i)\n", __builtin_return_address(0), shader);
+    l_debug("[gl_dbg] glCompileShader<%p>(shader: %i)\n", __builtin_return_address(0), shader);
 #endif
 
 #ifndef USE_GXP_SHADERS

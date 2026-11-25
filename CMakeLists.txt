@@ -18,7 +18,7 @@ set(VITA_VERSION "01.00")
 set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12")
 
 # Optional: used for "send" and "dump" targets
-set(PSVITAIP "10.222.169.76" CACHE STRING "PSVita IP (for FTP access)")
+set(PSVITAIP "192.168.178.58" CACHE STRING "PSVita IP (for FTP access)")
 set(PARSECOREPATH "$ENV{PARSECOREPATH}" CACHE STRING "vita-parse-core main.py")
 
 # Game-specific definitions
@@ -64,7 +64,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   # Uncomment this for verbose FalsoJNI logging:
   #add_definitions(-DFALSOJNI_DEBUGLEVEL=0)
   # Uncomment this for OpenGL logging:
-  #add_definitions(-DDEBUG_OPENGL)
+  add_definitions(-DDEBUG_OPENGL)
   # Uncomment this for so_util logging:
   #add_definitions(-DSO_UTIL_VERBOSE=1)
   # Uncomment this for verbose FalsoNDK logging:
@@ -73,7 +73,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   #add_definitions(-DDEBUG_PIPEFD=1)
   #add_definitions(-DDEBUG_CALLBACKS=1)
   # Space-separated flags passed to vitaGL
-  set(VITAGL_MAKE_FLAGS "TEST=1 LOG_ERRORS=1 HAVE_SHADER_CACHE=1 ")
+  set(VITAGL_MAKE_FLAGS "TEST=1 LOG_ERRORS=1 HAVE_SHADER_CACHE=1 DEBUG_GLSL_TRANSLATOR=1")
 else()
   # Space-separated flags passed to vitaGL
   set(VITAGL_MAKE_FLAGS "NO_DEBUG=1 HAVE_SHADER_CACHE=1")

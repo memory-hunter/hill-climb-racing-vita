@@ -46,6 +46,14 @@ jint getSettingInt(jmethodID id, va_list args)
 	return defaultValue;
 }
 
+jstring getSettingString(jmethodID id, va_list args)
+{
+	jstring key = va_arg(args, jstring);
+	jstring defaultValue = va_arg(args, jstring);
+	fjni_logv_info("[FalsoJNI] getSettingString(%s, %d) called", key, defaultValue);
+	return defaultValue;
+}
+
 void flush(jmethodID id, va_list args)
 {
 	fjni_logv_info("%s", "[FalsoJNI] flush() called");
@@ -96,6 +104,11 @@ jint getApiLevel(jmethodID id, va_list args)
 {
 	fjni_logv_info("%s", "[FalsoJNI] getApiLevel() called");
 	return 19;
+}
+
+jboolean retFalse(jmethodID id, va_list args)
+{
+	return JNI_FALSE;
 }
 
 /*
@@ -149,13 +162,15 @@ NameToMethodID nameToMethodId[] = {
 	{207, "endBackgroundMusic", METHOD_TYPE_VOID},
 	{208, "getBackgroundVolume", METHOD_TYPE_FLOAT},
 	{209, "setBackgroundMusicVolume", METHOD_TYPE_VOID},
-
+	{300, "isTv", METHOD_TYPE_BOOLEAN},
+	{301, "getSettingString", METHOD_TYPE_OBJECT},
 };
 
 MethodsBoolean methodsBoolean[] = {
 	{114, hasInstallReward},
 	{117, hasValue},
 	{206, isBackgroundMusicPlaying},
+	{300, retFalse},
 };
 MethodsByte methodsByte[] = {};
 MethodsChar methodsChar[] = {};
@@ -180,6 +195,7 @@ MethodsObject methodsObject[] = {
 	{104, getDeviceLanguage},
 	{105, getAndroidVersion},
 	{112, getStringForKey},
+	{301, getSettingString},
 };
 MethodsShort methodsShort[] = {};
 MethodsVoid methodsVoid[] = {

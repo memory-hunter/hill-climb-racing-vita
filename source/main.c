@@ -101,12 +101,12 @@ int main()
     Game_isTestingMode();
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
     Game_nativeInit(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     while (1)
     {
         controls_poll();
 
-        Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
         Game_nativeRender(&jni);
 
         gl_swap();
