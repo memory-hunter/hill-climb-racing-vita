@@ -26,6 +26,8 @@ extern "C"
     void startPrefsSaver(int intervalSec);
     static void prefsSaverLoop();
 
+    void _savePrefs(void);
+
 #ifdef __cplusplus
 };
 #endif

@@ -24,12 +24,19 @@ const std::string shared_prefs_path = DATA_PATH "SharedPreferences.bin";
 const std::string shared_prefs_bak_path = DATA_PATH "SharedPreferences.bin.bak";
 const std::string shaders_path = DATA_PATH "gxp/";
 
+static void savePrefs(const std::string &filename);
+
 static std::thread prefsSaverThread;
 static std::condition_variable prefsSaverCond;
 static std::mutex prefsSaverMutex;
 static std::atomic<bool> prefsSaverRunning{false};
 static std::atomic<bool> needsSaving{false};
 static int saveIntervalSeconds = 2;
+
+void _savePrefs(void)
+{
+    savePrefs(shared_prefs_path);
+}
 
 template <typename T>
 void writeValue(std::ofstream &out, const T &value)

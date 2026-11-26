@@ -2,6 +2,7 @@
 #include <falso_jni/FalsoJNI_Impl.h>
 #include <falso_jni/FalsoJNI_Logger.h>
 #include <stdint.h>
+#include <psp2/kernel/processmgr.h>
 
 #include "SharedPreferences.h"
 #include "audio.h"
@@ -244,6 +245,12 @@ jint getApiLevel(jmethodID id, va_list args)
 	return 19;
 }
 
+void terminateProcess(jmethodID id, va_list args)
+{
+	_savePrefs();
+	sceKernelExitProcess(0);
+}
+
 /*
  * JNI Methods
  */
@@ -319,6 +326,7 @@ NameToMethodID nameToMethodId[] = {
 	{231, "showInterstitialPromo", METHOD_TYPE_VOID},
 	{232, "showCrossPromotion", METHOD_TYPE_VOID},
 	{233, "setAchievementSteps", METHOD_TYPE_VOID},
+	{300, "terminateProcess", METHOD_TYPE_VOID},
 };
 
 MethodsBoolean methodsBoolean[] = {
@@ -402,6 +410,7 @@ MethodsVoid methodsVoid[] = {
 	{231, showInterstitialPromo},
 	{232, showCrossPromotion},
 	{233, setAchievementSteps},
+	{300, terminateProcess},
 };
 
 /*
