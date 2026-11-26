@@ -2,10 +2,12 @@
 #include <falso_jni/FalsoJNI_Impl.h>
 #include <falso_jni/FalsoJNI_Logger.h>
 #include <stdint.h>
+#include <string.h>
 #include <psp2/kernel/processmgr.h>
 
 #include "SharedPreferences.h"
 #include "audio.h"
+#include "iap_store.h"
 
 /*
  * Hill Climb Racing methods
@@ -106,20 +108,23 @@ jboolean hasEulaBeenAccepted(jmethodID id, va_list args)
 
 jint getIAPGems(jmethodID id, va_list args)
 {
-	fjni_logv_info("%s", "[FalsoJNI] getIAPGems() called");
-	return 0;
+	jint val = iap_get_gems();
+	fjni_logv_info("[FalsoJNI] getIAPGems() called -> %d", val);
+	return val;
 }
 
 jint getIAPBundle(jmethodID id, va_list args)
 {
-	fjni_logv_info("%s", "[FalsoJNI] getIAPBundle() called");
-	return 0;
+	jint val = iap_get_bundle();
+	fjni_logv_info("[FalsoJNI] getIAPBundle() called -> %d", val);
+	return val;
 }
 
 jint getIAPError(jmethodID id, va_list args)
 {
-	fjni_logv_info("%s", "[FalsoJNI] getIAPError() called");
-	return 0;
+	jint val = iap_get_error();
+	fjni_logv_info("[FalsoJNI] getIAPError() called -> %d", val);
+	return val;
 }
 
 void showEULA(jmethodID id, va_list args)
@@ -206,14 +211,16 @@ jboolean hasInstallReward(jmethodID id, va_list args)
 
 jint getIAPCoins(jmethodID id, va_list args)
 {
-	fjni_logv_info("%s", "[FalsoJNI] getIAPCoins() called");
-	return 0;
+	jint val = iap_get_coins();
+	fjni_logv_info("[FalsoJNI] getIAPCoins() called -> %d", val);
+	return val;
 }
 
 jint getIAPAdFree(jmethodID id, va_list args)
 {
-	fjni_logv_info("%s", "[FalsoJNI] getIAPAdFree() called");
-	return 0;
+	jint val = iap_get_adfree();
+	fjni_logv_info("[FalsoJNI] getIAPAdFree() called -> %d", val);
+	return val;
 }
 
 jboolean hasValue(jmethodID id, va_list args)
@@ -249,6 +256,37 @@ void terminateProcess(jmethodID id, va_list args)
 {
 	_savePrefs();
 	sceKernelExitProcess(0);
+}
+
+void requestInAppPurchaseGooglePlay(jmethodID id, va_list args)
+{
+	jstring sku = va_arg(args, jstring);
+	const char *sku_str = jni->GetStringUTFChars(&jni, sku, NULL);
+	fjni_logv_info("[FalsoJNI] requestInAppPurchaseGooglePlay(%s) called", sku_str);
+	iap_purchase(sku_str);
+	jni->ReleaseStringUTFChars(&jni, sku, sku_str);
+}
+
+void showMessageBox(jmethodID id, va_list args)
+{
+	va_arg(args, jstring);
+	va_arg(args, jstring);
+	fjni_logv_info("%s", "[FalsoJNI] showMessageBox() called");
+}
+
+void resetIAP(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] resetIAP() called");
+	iap_reset();
+}
+
+void refreshIAP(jmethodID id, va_list args)
+{
+	fjni_logv_info("%s", "[FalsoJNI] refreshIAP() called");
+}
+
+void dummyVoid(jmethodID id, va_list args)
+{
 }
 
 /*
@@ -327,6 +365,10 @@ NameToMethodID nameToMethodId[] = {
 	{232, "showCrossPromotion", METHOD_TYPE_VOID},
 	{233, "setAchievementSteps", METHOD_TYPE_VOID},
 	{300, "terminateProcess", METHOD_TYPE_VOID},
+	{301, "requestInAppPurchaseGooglePlay", METHOD_TYPE_VOID},
+	{302, "resetIAP", METHOD_TYPE_VOID},
+	{303, "refreshIAP", METHOD_TYPE_VOID},
+	{304, "showMessageBox", METHOD_TYPE_VOID},
 };
 
 MethodsBoolean methodsBoolean[] = {
@@ -411,6 +453,10 @@ MethodsVoid methodsVoid[] = {
 	{232, showCrossPromotion},
 	{233, setAchievementSteps},
 	{300, terminateProcess},
+	{301, requestInAppPurchaseGooglePlay},
+	{302, resetIAP},
+	{303, refreshIAP},
+	{304, showMessageBox},
 };
 
 /*

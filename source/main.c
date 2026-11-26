@@ -22,6 +22,7 @@ int sceLibcHeapSize = 4 * 1024 * 1024;
 
 #define SCREEN_WIDTH 960
 #define SCREEN_HEIGHT 544
+#define JNI_STR(s) jni->NewStringUTF(&jni, s)
 
 so_module so_mod;
 
@@ -83,6 +84,7 @@ int main()
     int (*Game_nativeResize)(void *env, void *obj, jint screen_width, jint screen_height) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeResize");
     int (*Game_nativeRender)(void *env) = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeRender");
     int (*Game_setInAppItemPrice)(void *env, void *obj, jstring item, jstring price) = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_setInAppItemPrice");
+    void (*Game_setInAppItem)(void *, void *, jstring, jstring, jstring, jstring, jstring, jboolean, jboolean, jboolean, jboolean, jint) = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_setInAppItem");
 
     Cocos2dx_nativeTouchesBegin = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesBegin");
     Cocos2dx_nativeTouchesMove = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesMove");
@@ -92,6 +94,39 @@ int main()
     Game_onControllerKeyEvent = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_onControllerKeyEvent");
 
     JNI_OnLoad(&jvm);
+
+    char sku[96], amt[16], icon[12];
+
+    const char *tp[] = {"", "iap2.", "iap3.", "iap4."};
+    long ca[4][7] = {
+        {150000, 300000, 750000, 2000000, 4000000, 8000000, 20000000},
+        {300000, 600000, 1500000, 4000000, 8000000, 16000000, 40000000},
+        {600000, 1200000, 3000000, 8000000, 16000000, 32000000, 80000000},
+        {1200000, 2400000, 6000000, 16000000, 32000000, 64000000, 160000000}};
+    const char *cb[] = {"", "+25%", "+99%", "+166%", "+212%", "+308%", "+431%"};
+    for (int t = 0; t < 4; t++)
+        for (int i = 0; i < 7; i++)
+        {
+            snprintf(sku, sizeof sku, "com.fingersoft.hillclimb.%sadfree_%ldcoins", tp[t], ca[t][i]);
+            snprintf(amt, sizeof amt, "%ld", ca[t][i]);
+            snprintf(icon, sizeof icon, "coin%d", (t >= 2 && i == 0) ? 1 : i);
+            Game_setInAppItem(&jni, NULL, JNI_STR(sku), JNI_STR("-.--"), JNI_STR(amt), JNI_STR(cb[i]), JNI_STR(icon), 0, 0, 0, 0, 0);
+            Game_setInAppItemPrice(&jni, NULL, JNI_STR(sku), JNI_STR("0.00"));
+        }
+
+    const char *gp[] = {"iap2.", "iap1."};
+    long ga[2][6] = {{500, 2000, 5000, 11000, 23000, 40000}, {1000, 3000, 6000, 15000, 26000, 50000}};
+    const char *gb[2][6] = {{"", "+132%", "+199%", "+219%", "+305%", "+318%"},
+                            {"", "+99%", "+119%", "+149%", "+172%", "+199%"}};
+    for (int t = 0; t < 2; t++)
+        for (int i = 0; i < 6; i++)
+        {
+            snprintf(sku, sizeof sku, "com.fingersoft.hillclimb.%sadfree_%ldgems", gp[t], ga[t][i]);
+            snprintf(amt, sizeof amt, "%ld", ga[t][i]);
+            snprintf(icon, sizeof icon, "diamond%d", i + 1);
+            Game_setInAppItem(&jni, NULL, JNI_STR(sku), JNI_STR("-.--"), JNI_STR(amt), JNI_STR(gb[t][i]), JNI_STR(icon), 0, 0, 0, 1, 0);
+            Game_setInAppItemPrice(&jni, NULL, JNI_STR(sku), JNI_STR("0.00"));
+        }
 
     Game_isTestingMode();
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
