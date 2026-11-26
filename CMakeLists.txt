@@ -84,6 +84,7 @@ add_definitions(-D_GNU_SOURCE -D__POSIX_VISIBLE=999999)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu11 -Wno-deprecated")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu++20 -Wno-write-strings -Wno-psabi")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--defsym,__sce_headroom=0x1000")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -g3")
@@ -100,6 +101,7 @@ set(SOURCES
     source/patch.c
     source/audio.cpp
     source/SharedPreferences.cpp
+    source/iap_store.cpp
     source/reimpl/bits/_ctype.c
     source/reimpl/errno.c
     source/reimpl/io.c
