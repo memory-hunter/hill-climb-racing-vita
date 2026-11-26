@@ -29,21 +29,14 @@ void (*Cocos2dx_nativeTouchesBegin)(JNIEnv *jni, jobject thiz, jint id, jfloat x
 void (*Cocos2dx_nativeTouchesMove)(JNIEnv *jni, jobject thiz, jint *ids, jfloat *xs, jfloat *ys);
 void (*Cocos2dx_nativeTouchesEnd)(JNIEnv *jni, jobject thiz, jint id, jfloat x, jfloat y);
 int (*Cocos2dx_nativeKeyDown)(JNIEnv *jni, jobject thiz, jint keyCode);
+int (*Game_onControllerKeyEvent)(JNIEnv *jni, jobject thiz, jint keyCode, jint keyState);
+void (*Game_onControllerConnectionEvent)(JNIEnv *jni, jobject thiz, jboolean connected, jint type);
 
 JavaDynArray *touch_ids, *touch_xs, *touch_ys;
 
 void controls_handler_key(int32_t keycode, ControlsAction action)
 {
-    switch (keycode)
-    {
-    case AKEYCODE_BUTTON_L1:
-        controls_handler_touch(69, 156.0, 410.0, action);
-        return;
-    case AKEYCODE_BUTTON_R1:
-        controls_handler_touch(420, 817.0, 410.0, action);
-        return;
-    }
-    Cocos2dx_nativeKeyDown(&jni, NULL, keycode);
+    Game_onControllerKeyEvent(&jni, NULL, keycode, action == CONTROLS_ACTION_DOWN ? 1 : 0);
 }
 
 void controls_handler_touch(int32_t id, float x, float y, ControlsAction action)
@@ -95,11 +88,14 @@ int main()
     Cocos2dx_nativeTouchesMove = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesMove");
     Cocos2dx_nativeTouchesEnd = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeTouchesEnd");
     Cocos2dx_nativeKeyDown = (void *)so_symbol(&so_mod, "Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeKeyDown");
+    Game_onControllerConnectionEvent = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_onControllerConnectionEvent");
+    Game_onControllerKeyEvent = (void *)so_symbol(&so_mod, "Java_com_fingersoft_game_MainActivity_onControllerKeyEvent");
 
     JNI_OnLoad(&jvm);
 
     Game_isTestingMode();
     Cocos2dx_nativeSetPaths(&jni, NULL, jni->NewStringUTF(&jni, "ux0:/data/hcr/base.apk"));
+    Game_onControllerConnectionEvent(&jni, NULL, JNI_TRUE, 5);
     Game_nativeInit(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
     Game_nativeResize(&jni, NULL, SCREEN_WIDTH, SCREEN_HEIGHT);
 
